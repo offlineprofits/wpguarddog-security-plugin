@@ -1,0 +1,9 @@
+{
+    "name": "infusionsoft/PHP-iSDK",
+    "require": {
+        "php": ">=5.2.0"
+    },
+    "autoload": {
+        "files": ["src/isdk.php"]
+    }
+}
