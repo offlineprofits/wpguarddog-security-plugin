@@ -20,7 +20,14 @@ if (isset($_POST)) {
 		require_once("../PHP-iSDK-master/src/isdk.php");
 		$isdk = new iSDK();
 	}
-	
+	if($row->aweber) {
+		require_once("../add_subscriber.php");
+		$aweber = new aweber();
+		$email = $_POST['f3_label'];
+		$fname = $_POST['f6_label'];
+		$lname = $_POST['f7_label'];
+		$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname); 
+	}
 	
     if($row->captcha == "on") {
 		session_start();

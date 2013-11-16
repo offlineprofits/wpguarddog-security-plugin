@@ -345,15 +345,6 @@ function formengine_menu() {
 	if(is_plugin_active('formengine_paypal/index.php')) { add_submenu_page(NULL, 'Formengine - PayPal', 'Formengine - PayPal', 'administrator', 'formengine_paypal', 'formengine_paypal'); }
 	
 }
-function formengine_aweber() {
-	initformenginepleClient();
-	global $pleClient;
-	$activation_form= $pleClient->preCheckLicense();
-	if($activation_form) 
-		return;
-	
-	require_once(ABSPATH . 'wp-admin/includes/aweber.php');
-}
 
 
 function formengine_webinar() {
@@ -405,6 +396,7 @@ function formengine_install() {
 	  progress text NOT NULL,
 	  webinar text,
 	  infusion text,
+	  aweber text,
 	  formid text,
 	  formname text,
 	  formversion text,
@@ -2848,6 +2840,17 @@ function formengine_infusionsoft() {
 	require('assets/includes/infusionsoft.php');
 	
 } 
+
+function formengine_aweber() {
+	initformenginepleClient();
+	global $pleClient;
+	$activation_form= $pleClient->preCheckLicense();
+	if($activation_form) 
+		return;
+	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	require('assets/includes/aweber.php');
+	
+}
 
 
 ?>
