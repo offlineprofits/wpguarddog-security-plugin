@@ -7,7 +7,7 @@ $infusion->cfgCon("connectionName");
 $webForm = $infusion->getWebFormMap();
 global $wpdb;
 $table = $wpdb->prefix . "formengine";	
-
+$table_infusionsoft = $wpdb->prefix . "formengine_infusion"; 
 if(isset($_POST['inf_save'])) {
 	$result = $wpdb->get_results("SELECT * FROM $table");
 	foreach ($result as $res) {
@@ -16,7 +16,17 @@ if(isset($_POST['inf_save'])) {
 	if($_POST['addinf'])
 	foreach($_POST['addinf'] as $a) {
 		$wpdb->update($wpdb->prefix."formengine", array("infusion" => 1), array("id" => $a));
+		//echo "INSERT INTO $table_infusionsoft(formid) VALUES('$a')"; die();
+		$i = $wpdb->get_var("SELECT id FROM $table_infusionsoft WHERE id=$a");
+		if(!$i) {
+ 			$wpdb->query("INSERT INTO $table_infusionsoft(formid) VALUES('$a')");
+		}
 	}
+	
+}
+
+if(isset($_POST['save_feed'])) {
+	$wpdb->update($table_infusionsoft, $data, $where);
 }
 
 ?>
@@ -65,13 +75,79 @@ if(isset($_POST['settings_submit'])) {
 <div id="feedsview" style="display: none;">
 	<b>Forms Intergrated with Infusionsoft</b>
 	<?php 
-	$results = $wpdb->get_results("SELECT title FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid");
+	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid");
 	echo "<table>";
+	//print_r($results);die();
 	foreach($results as $r) {
+		$order  = $r->sortorder;
+		$sortrows = explode(",", $order);
 	?>
-	<tr><td><?php echo $r->title; ?></td></tr>
+	<tr><td><a id="<?php $r->id ?>"><?php echo $r->title; ?></a></td></tr>
+	<tr>
+		<td>Email</td>
+		<td>
+		<select name="email-<?php echo $r->id; ?>">
+		<?php foreach ($sortrows as $counter) {
+			
+		$type = 'f'.$counter.'_type';
+		$label = 'f'.$counter.'_label';
+		if($r->$type == "email" ) {
+		?>
+			<option value="<?php echo $r->$label; ?>" ><?php echo $r->$label; ?></option>
+		<?php 
+		} 
+		?>
+		
+		<?php } ?>
+		</select>
+		</td>
+	</tr>
+	<tr>
+		<td>First Name</td>
+		<td>
+		<select name="firstname-<?php echo $r->id; ?>">
+		<?php foreach ($sortrows as $counter) {
+			
+		$type = 'f'.$counter.'_type';
+		$label = 'f'.$counter.'_label';
+		if($r->$type == "input" ) {
+		?>
+			<option value="<?php echo $r->$label; ?>" ><?php echo $r->$label; ?></option>
+		<?php 
+		} 
+		?>
+		
+		<?php } ?>
+		</select>
+		</td>
+	</tr>
+	<tr>
+		<td>Last Name</td>
+		<td>
+		<select name="lastname-<?php echo $r->id; ?>">
+		<?php foreach ($sortrows as $counter) {
+			
+		$type = 'f'.$counter.'_type';
+		$label = 'f'.$counter.'_label';
+		if($r->$type == "input" ) {
+		?>
+			<option value="<?php echo $r->$label; ?>" ><?php echo $r->$label; ?></option>
+		<?php 
+		} 
+		?>
+		
+		<?php } ?>
+		</select>
+		</td>
+	</tr>
+	<tr>
+		<td>Tag Id</td>
+		<td><input type="text" name="tagid-<?php echo $r->id; ?>" /></td>
+	</tr>
+	</tr>
 	<?php
 	} echo "</table>";?>
+	<input type="submit" value="Save Changes" name="save_feed" />
 </div>	
 
 <div id="addinfview" style="display: none;">
@@ -103,8 +179,10 @@ if(isset($_POST['settings_submit'])) {
 	<form method="post"> 
 	<table>
 		<b>Add Form Name to InfusionSoft</b>
-		<?php foreach ($infusionForms as $inf) {  ?>
-			<tr><td><?php echo $inf->title; ?></td><td><input type="checkbox" name="addinf[]" id="addinf" value="<?php echo $inf->id; ?>" /></td></tr>
+		<?php foreach ($infusionForms as $inf) {
+				$i = $wpdb->get_var("SELECT infusion FROM $table WHERE id=$inf->id");
+			  ?>
+			<tr><td><?php echo $inf->title; ?></td><td><input type="checkbox" <?php if($i==1) echo "checked" ?> name="addinf[]" id="addinf" value="<?php echo $inf->id; ?>" /></td></tr>
 		<?php } ?>
 		<tr>
 		<td>
@@ -136,6 +214,8 @@ if(isset($_POST['save'])) {
 	}
 	$fvalue = substr($fvalue, 0, -1);
 	$result = $wpdb->query("SELECT id FROM $table_new WHERE formid=$_POST[formid]");
+	print_r($result);die("polo");
+	
 	if($result) {
 		$wpdb->update($table_new, array(
 				"formid" => $_POST['formid'],
@@ -146,6 +226,7 @@ if(isset($_POST['save'])) {
 				
 	}
 	else {
+		die("here");
 		$wpdb->insert($table_new, array(
 				"formid" => $_POST['formid'],
 				"val" => $fvalue,

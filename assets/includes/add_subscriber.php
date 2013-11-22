@@ -21,13 +21,13 @@ class aweber {
 		$this->accessKey = 'Agy25MJTEbLFafDAyv1qZP35';
 		$this->accessSecret = 'Os2QiFbdPEsKNsJDkV7ZTtaPa9ly7jsAikPhWSIc';
 		$this->account_id =  "496277";
-		$this->list_id = '1572609'; // list name:apprentice-rms
+		//$this->list_id = '1572609'; // list name:apprentice-rms
 		$this->aweber = new AWeberAPI($this->consumerKey, $this->consumerSecret);		
 	}
 	
-	function add_subscriber($email, $ip, $name) {
+	function add_subscriber($email, $ip, $name, $listid) {
 		try {
-			
+			$this->list_id = $listid;
 		    $account = $this->aweber->getAccount($this->accessKey, $this->accessSecret);
 			
 		    $listURL = "/accounts/{$this->account_id}/lists/{$this->list_id}";

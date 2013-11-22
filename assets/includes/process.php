@@ -19,14 +19,17 @@ if (isset($_POST)) {
 	if($row->infusion) {
 		require_once("../PHP-iSDK-master/src/isdk.php");
 		$isdk = new iSDK();
+		$infusion->cfgCon("connectionName");
+		$infusion->addCon($cMap);
 	}
 	if($row->aweber) {
+		$listid = $fid = $wpdb->get_var("SELECT aweber_list_id FROM $table WHERE id='$row->id'");
 		require_once("../add_subscriber.php");
 		$aweber = new aweber();
 		$email = $_POST['f3_label'];
 		$fname = $_POST['f6_label'];
 		$lname = $_POST['f7_label'];
-		$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname); 
+		$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname, $listid); 
 	}
 	
     if($row->captcha == "on") {
@@ -48,9 +51,9 @@ if (isset($_POST)) {
 	$updateid = mysql_insert_id();
 	$k = array_keys($_POST);	
 	if($row->infusion) {
-		$infusion = new iSDK();
-		$infusion->cfgCon("connectionName");
-		$infusion->addCon($cMap);
+		//$infusion = new iSDK();
+		//$infusion->cfgCon("connectionName");
+		//$infusion->addCon($cMap);
 	}
 	/*$purl = "https://pti.infusionsoft.com/app/form/process/".$_POST[$k[1]][0];
 	

@@ -7,7 +7,9 @@ Version: .2
 Author: WPfrogs
 Author URI: http://wpfrogs.com
 */
+error_reporting(1);
 require_once 'plugin-updates/plugin-update-checker.php';
+
 //require_once 'AWeber-API-PHP-Library-master/aweber_api/aweber_api.php';
 
 $MyUpdateChecker = new PluginUpdateChecker(
@@ -18,6 +20,7 @@ $MyUpdateChecker = new PluginUpdateChecker(
 require_once('lib/PLE_Client_Util.php');
 require_once("assets/PHP-iSDK-master/src/isdk.php");
 require_once('assets/citrix.php');
+require_once("assets/includes/aweber_api/aweber_api.php");
 /************************************************************
 *License Integration
 ************************************************************/
@@ -261,7 +264,8 @@ function update_form($fid) {
 		'modalbutton' => stripslashes_deep($_POST["modalbutton"]),
 		'progress' => $_POST["progress"],
 		'organizerkey' => $_POST["organizerkey"],
-		'accesstoken' => $_POST["accesstoken"]
+		'accesstoken' => $_POST["accesstoken"],
+		'aweber_list_id' => $_POST["aweber"]
 	), array( 'id' => $fid ) );
 	
 	$fields = $wpdb->get_var("SELECT fields FROM $table WHERE id = $fid");
@@ -403,6 +407,7 @@ function formengine_install() {
 	  ipaddress text,
 	  accesstoken text,
 	  organizerkey text,
+	  aweber_list_id text,
 	  views text NOT NULL,
 	  UNIQUE KEY id (id)
 	);";
@@ -1679,7 +1684,40 @@ function formengine_form() {
 								<input name="modalbutton" class="tdmfw_input" type="text" style="width:269px;" value="<?php echo $form->modalbutton;?>">
 							</td>
 							</tr>
+							<tr>
+							<?php 
+							$consumerKey = get_option("consumerkey");
+							$consumerSecret = get_option("consumersecret");
 							
+							$accessKey = get_option("accesskey");
+							$accessSecret = get_option("accesssecret");  
+							if($accessKey && $accessSecret) {
+							?>
+								<td style="width:50%;"><?php _e('Aweber List','formengine'); ?> </td>
+								<td style="width:50%;">
+									<select name="aweber" style="width:269px;">
+									<option>Select a List</option>
+							<?php	
+								//require_once("assets/includes/aweber_api/aweber_api.php");
+								$aweber = new AWeberAPI($consumerKey, $consumerSecret);
+								$account = $aweber->getAccount($accessKey, $accessSecret);
+    							$account_id = $account->id;
+    							$listURL ="/accounts/{$account->id}/lists/"; 
+    							$lists = $account->loadFromUrl($listURL);
+								//print_r($lists);
+    							foreach($lists->data['entries'] as $list ){
+    							?>
+    								<option value="<?php echo $list['id'] ?>"><?php echo $list['name'] ?></option>
+        							<!--print "<pre>\$list_id = '{$list['id']}'; // list name:{$list['name']}\n</pre>";-->
+    							<?php
+    							}
+								?>
+								</select>
+								</td>
+								<?php
+        					}
+							?>
+							</tr>
 						</tbody>
 					</table>
 
