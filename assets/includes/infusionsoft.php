@@ -1,6 +1,6 @@
 <?php
 
-
+error_reporting(1);
 $infusion = new iSDK();
 //$oldkey = "f3f94c143d755752a2f64d1a53820f90";
 $infusion->cfgCon("connectionName");
@@ -26,7 +26,22 @@ if(isset($_POST['inf_save'])) {
 }
 
 if(isset($_POST['save_feed'])) {
-	$wpdb->update($table_infusionsoft, $data, $where);
+	
+	$ids = $wpdb->get_results("SELECT id FROM $table_infusionsoft");
+	
+	foreach($ids as $id) {
+		$data = array(
+					"email" => $_POST['email-'.$id->id],
+					"first_name" => $_POST['firstname-'.$id->id],
+					"last_name" => $_POST['lastname-'.$id->id],
+					'tagid' => $_POST['tagid-'.$id->id]
+					);	
+		
+		$where = array("id" => $id->id);
+		$wpdb->update($table_infusionsoft, $data, $where);	
+	}
+	
+	
 }
 
 ?>
@@ -73,12 +88,18 @@ if(isset($_POST['settings_submit'])) {
 </div>	
 
 <div id="feedsview" style="display: none;">
+	<form method="post">
 	<b>Forms Intergrated with Infusionsoft</b>
 	<?php 
 	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid");
 	echo "<table>";
-	//print_r($results);die();
+	
 	foreach($results as $r) {
+//echo $r."oooo";die();
+	//echo "SELECT email,first_name,last_name FROM $table_infusionsoft WHERE formid='$r->id'";die("asdasd");
+		$values = $wpdb->get_results("SELECT email,first_name,last_name FROM $table_infusionsoft WHERE formid=$r->id");
+		 print_r($values);//die();
+		//print_r($r);die();
 		$order  = $r->sortorder;
 		$sortrows = explode(",", $order);
 	?>
@@ -88,12 +109,12 @@ if(isset($_POST['settings_submit'])) {
 		<td>
 		<select name="email-<?php echo $r->id; ?>">
 		<?php foreach ($sortrows as $counter) {
-			
+		//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
 		$type = 'f'.$counter.'_type';
 		$label = 'f'.$counter.'_label';
 		if($r->$type == "email" ) {
 		?>
-			<option value="<?php echo $r->$label; ?>" ><?php echo $r->$label; ?></option>
+			<option value="<?php echo $counter; ?>" <?php if($values[0]->email == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 		<?php 
 		} 
 		?>
@@ -112,7 +133,7 @@ if(isset($_POST['settings_submit'])) {
 		$label = 'f'.$counter.'_label';
 		if($r->$type == "input" ) {
 		?>
-			<option value="<?php echo $r->$label; ?>" ><?php echo $r->$label; ?></option>
+			<option value="<?php echo $counter; ?>" <?php if($values[0]->first_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 		<?php 
 		} 
 		?>
@@ -126,12 +147,13 @@ if(isset($_POST['settings_submit'])) {
 		<td>
 		<select name="lastname-<?php echo $r->id; ?>">
 		<?php foreach ($sortrows as $counter) {
-			
+			//echo "<script>alert('Main   ".$values[0]->last_name."');</script>";	
+		//echo "<script>alert('sub  ".$counter."');</script>";	
 		$type = 'f'.$counter.'_type';
 		$label = 'f'.$counter.'_label';
 		if($r->$type == "input" ) {
 		?>
-			<option value="<?php echo $r->$label; ?>" ><?php echo $r->$label; ?></option>
+			<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 		<?php 
 		} 
 		?>
@@ -142,12 +164,13 @@ if(isset($_POST['settings_submit'])) {
 	</tr>
 	<tr>
 		<td>Tag Id</td>
-		<td><input type="text" name="tagid-<?php echo $r->id; ?>" /></td>
+		<td><input type="text" name="tagid-<?php echo $r->id; ?>" value="<?php echo $values[0]->tagid ?>" /></td>
 	</tr>
 	</tr>
 	<?php
 	} echo "</table>";?>
 	<input type="submit" value="Save Changes" name="save_feed" />
+	</form>
 </div>	
 
 <div id="addinfview" style="display: none;">
@@ -214,7 +237,7 @@ if(isset($_POST['save'])) {
 	}
 	$fvalue = substr($fvalue, 0, -1);
 	$result = $wpdb->query("SELECT id FROM $table_new WHERE formid=$_POST[formid]");
-	print_r($result);die("polo");
+	print_r($result);//die("polo");
 	
 	if($result) {
 		$wpdb->update($table_new, array(
