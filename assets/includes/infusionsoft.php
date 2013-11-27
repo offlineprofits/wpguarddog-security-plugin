@@ -91,14 +91,14 @@ if(isset($_POST['settings_submit'])) {
 	<form method="post">
 	<b>Forms Intergrated with Infusionsoft</b>
 	<?php 
-	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid");
+	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid  AND infusion=1");
 	echo "<table>";
 	
 	foreach($results as $r) {
 //echo $r."oooo";die();
 	//echo "SELECT email,first_name,last_name FROM $table_infusionsoft WHERE formid='$r->id'";die("asdasd");
 		$values = $wpdb->get_results("SELECT email,first_name,last_name FROM $table_infusionsoft WHERE formid=$r->id");
-		 print_r($values);//die();
+		 //print_r($values);//die();
 		//print_r($r);die();
 		$order  = $r->sortorder;
 		$sortrows = explode(",", $order);

@@ -10,7 +10,7 @@ if (isset($_POST)) {
 	$table3 = $wpdb->prefix . "formengine_infusion";
     $fid = $_POST['fid'];
     $row = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
-    if($row->webinar || $row->infusion) {
+    if($row->webinar) {
     	require_once("../citrix.php");
 		$accesstoken = $row->accesstoken;
 		$organizerkey = $row->organizerkey;
@@ -20,15 +20,18 @@ if (isset($_POST)) {
 		require_once("../PHP-iSDK-master/src/isdk.php");
 		$isdk = new iSDK();
 		$infusion->cfgCon("connectionName");
-		$infusion->addCon($cMap);
+		//$cMap = array(emai,firstname,lastname);
+		//$infusion->addCon($cMap);
+		
 	}
 	if($row->aweber) {
 		$listid = $fid = $wpdb->get_var("SELECT aweber_list_id FROM $table WHERE id='$row->id'");
 		require_once("../add_subscriber.php");
 		$aweber = new aweber();
-		$email = $_POST['f3_label'];
-		$fname = $_POST['f6_label'];
-		$lname = $_POST['f7_label'];
+		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_aweber WHERE formid='$row->id'");
+		$email = $row["f".$val[0]->email."_value"];
+		$fname = $row["f".$val[0]->first_name."_value"];
+		$lname = $row["f".$val[0]->last_name."_value"];
 		$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname, $listid); 
 	}
 	

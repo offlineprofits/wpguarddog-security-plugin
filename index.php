@@ -3,7 +3,7 @@
 Plugin Name: JumpForms
 Plugin URI: http://wpfrogs.com
 Description: JumpForms makes it easy to build forms for your WordPress site
-Version: .2
+Version: 1.0
 Author: WPfrogs
 Author URI: http://wpfrogs.com
 */
@@ -358,8 +358,8 @@ function formengine_webinar() {
 	if($activation_form) 
 		return;
 	/****************************************************/
-	//wp_register_script('ajax', plugins_url('/assets/js/backend/ajax.js',__FILE__ )); wp_enqueue_script('ajax');
-	//wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_script('ajax', plugins_url('/assets/js/backend/ajax.js',__FILE__ )); wp_enqueue_script('ajax');
+	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
 	require('assets/includes/webinar.php');
 }
 
@@ -455,12 +455,23 @@ function formengine_install() {
 		org_key text,
 		UNIQUE KEY id (id)
 	);";	
+	
+	$table6 = $wpdb->prefix. "formengine_webinar_data";
+	$sql6 = "CREATE TABLE $table5 (
+		id mediumint(9) NOT NULL AUTO_INCREMENT,
+		formid mediumint(9),
+		email text,
+		first_name text,
+		last_name text,
+		UNIQUE KEY id (id)
+	);";
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta($sql);
 	dbDelta($sql2);
 	dbDelta($sql3);
 	dbDelta($sql4);
 	dbDelta($sql5);
+	dbDelta($sql6);
 	//create_table($table, $sql);
 	//create_table($table2, $sql2);
 	//create_table($table3, $sql3);
