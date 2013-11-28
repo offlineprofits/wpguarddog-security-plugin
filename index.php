@@ -1702,7 +1702,7 @@ function formengine_form() {
 							
 							$accessKey = get_option("accesskey");
 							$accessSecret = get_option("accesssecret");  
-							if($accessKey && $accessSecret) {
+							if($accessKey && $accessSecret && $forms[0]->aweber) {
 							?>
 								<td style="width:50%;"><?php _e('Aweber List','formengine'); ?> </td>
 								<td style="width:50%;">

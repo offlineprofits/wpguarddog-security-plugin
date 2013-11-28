@@ -92,6 +92,7 @@ if(isset($_POST['settings_submit'])) {
 	<b>Forms Intergrated with Infusionsoft</b>
 	<?php 
 	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid  AND infusion=1");
+//	print_r($results);die();
 	echo "<table>";
 	
 	foreach($results as $r) {
@@ -104,6 +105,35 @@ if(isset($_POST['settings_submit'])) {
 		$sortrows = explode(",", $order);
 	?>
 	<tr><td><a id="<?php $r->id ?>"><?php echo $r->title; ?></a></td></tr>
+	<?php /*
+	foreach ($sortrows as $counter) {
+		$type = 'f'.$counter.'_type';
+		$label = 'f'.$counter.'_label';
+		if($r->$type != "sectionend" && $r->$type != "sectionstart" ) {
+		?>
+			<tr>
+			<td><?php echo $r->$label; ?></td>
+			<td>
+			<select>
+			<?php
+				foreach ($sortrows as $counter1) {
+				
+					$type1 = 'f'.$counter1.'_type';
+					$label1 = 'f'.$counter1.'_label';
+					if($r->$type != "sectionend" && $r->$type != "sectionstart" ) {
+					?>
+						<option value="<?php echo $counter1; ?>" <?php if($values[0]->email == $counter1) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+					<?php 
+					}
+				} ?>
+			</select>
+			</td>
+			</tr>
+		<?php
+		}	
+		}
+		*/
+	?>
 	<tr>
 		<td>Email</td>
 		<td>
@@ -112,6 +142,12 @@ if(isset($_POST['settings_submit'])) {
 		//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
 		$type = 'f'.$counter.'_type';
 		$label = 'f'.$counter.'_label';
+		
+		if($r->$type != "sectionend" && $r->$type != "sectionstart" ) {
+		?>
+			<option value="<?php echo $counter; ?>" <?php if($values[0]->email == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+		<?php 
+		} 
 		if($r->$type == "email" ) {
 		?>
 			<option value="<?php echo $counter; ?>" <?php if($values[0]->email == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
@@ -166,9 +202,10 @@ if(isset($_POST['settings_submit'])) {
 		<td>Tag Id</td>
 		<td><input type="text" name="tagid-<?php echo $r->id; ?>" value="<?php echo $values[0]->tagid ?>" /></td>
 	</tr>
-	</tr>
+	
 	<?php
-	} echo "</table>";?>
+	} 
+	echo "</table>";?>
 	<input type="submit" value="Save Changes" name="save_feed" />
 	</form>
 </div>	

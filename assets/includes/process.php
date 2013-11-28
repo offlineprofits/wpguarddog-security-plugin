@@ -10,6 +10,7 @@ if (isset($_POST)) {
 	$table3 = $wpdb->prefix . "formengine_infusion";
     $fid = $_POST['fid'];
     $row = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
+
     if($row->webinar) {
     	require_once("../citrix.php");
 		$accesstoken = $row->accesstoken;
@@ -17,21 +18,31 @@ if (isset($_POST)) {
 		$citrix = new CitrixAPI($accesstoken, $organizerkey);	
     }
 	if($row->infusion) {
+		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_infusion WHERE formid='$row->id'");
+		$email = $row["f".$val[0]->email."_value"];
+		$fname = $row["f".$val[0]->first_name."_value"];
+		$lname = $row["f".$val[0]->last_name."_value"];
+		$groupId = $val[0]->tagid;
 		require_once("../PHP-iSDK-master/src/isdk.php");
 		$isdk = new iSDK();
 		$infusion->cfgCon("connectionName");
-		//$cMap = array(emai,firstname,lastname);
-		//$infusion->addCon($cMap);
-		
+		$con_id = $infusion->findByEmail($email,array('Id'));
+		if(!$con_id) {
+			$conDat = array('FirstName' => $fname,
+		            'LastName'  => $lname,
+		            'Email'     => $email);
+			$conID = $infusion->addCon($conDat);
+			$result = $infusion->grpAssign($conID, $groupId);
+		}
 	}
 	if($row->aweber) {
-		$listid = $fid = $wpdb->get_var("SELECT aweber_list_id FROM $table WHERE id='$row->id'");
-		require_once("../add_subscriber.php");
-		$aweber = new aweber();
 		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_aweber WHERE formid='$row->id'");
 		$email = $row["f".$val[0]->email."_value"];
 		$fname = $row["f".$val[0]->first_name."_value"];
 		$lname = $row["f".$val[0]->last_name."_value"];
+		$listid = $fid = $wpdb->get_var("SELECT aweber_list_id FROM $table WHERE id='$row->id'");
+		require_once("../add_subscriber.php");
+		$aweber = new aweber();
 		$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname, $listid); 
 	}
 	
@@ -50,14 +61,10 @@ if (isset($_POST)) {
 	array( 
 		'fid' => $fid 
 	));
-	//print_r($row);die();
+	
 	$updateid = mysql_insert_id();
 	$k = array_keys($_POST);	
-	if($row->infusion) {
-		//$infusion = new iSDK();
-		//$infusion->cfgCon("connectionName");
-		//$infusion->addCon($cMap);
-	}
+	
 	/*$purl = "https://pti.infusionsoft.com/app/form/process/".$_POST[$k[1]][0];
 	
 	if($row->infusion) {

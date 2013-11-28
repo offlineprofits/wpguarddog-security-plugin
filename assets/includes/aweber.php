@@ -35,12 +35,13 @@ if(isset($_POST['inf_save'])) {
 	foreach ($result as $res) {
 		$wpdb->update($table, array("aweber" => 0), array("id" => $res->id));
 	}
-	if($_POST['addinf'])
-	foreach($_POST['addinf'] as $a) {
-		$wpdb->update($wpdb->prefix."formengine", array("aweber" => 1), array("id" => $a));
-		$i = $wpdb->get_var("SELECT id FROM $table_aweber WHERE id=$a");
-		if(!$i) {
- 			$wpdb->query("INSERT INTO $table_aweber(formid) VALUES('$a')");
+	if($_POST['addinf']) {
+		foreach($_POST['addinf'] as $a) {
+			$wpdb->update($wpdb->prefix."formengine", array("aweber" => 1), array("id" => $a));
+			$i = $wpdb->get_var("SELECT id FROM $table_aweber WHERE id=$a");
+			if(!$i) {
+	 			$wpdb->query("INSERT INTO $table_aweber(formid) VALUES('$a')");
+			}
 		}
 	}
 }
@@ -112,52 +113,8 @@ function display_access_tokens($aweber){
 }
 
 if (!$accessKey || !$accessSecret){
-	//die("here");
-	    display_access_tokens($aweber);
+	display_access_tokens($aweber);
 }
-	
-//try { 
-    /*$account = $aweber->getAccount($accessKey, $accessSecret);
-    $account_id = $account->id;
-
-    if (!$list_id){
-        display_available_lists($account);
-        exit;
-    }
-
-    print "You script is configured properly! " . 
-        "You can now start to develop your API calls, see the example in this script.<br><br>" .
-        "Be sure to set \$test_email if you are going to use the example<p>";
-
-    //example: create a subscriber
-    /*
-    $test_email = '';
-    if (!$test_email){
-    print "Assign a valid email address to \$test_email and retry";
-    exit;
-    }
-    $listURL = "/accounts/{$account_id}/lists/{$list_id}"; 
-    $list = $account->loadFromUrl($listURL);
-    $params = array( 
-        'email' => $test_email,
-        'ip_address' => '127.0.0.1',
-        'ad_tracking' => 'client_lib_example', 
-        'misc_notes' => 'my cool app', 
-        'name' => 'John Doe' 
-    ); 
-    $subscribers = $list->subscribers; 
-    $new_subscriber = $subscribers->create($params);
-    print "{$test_email} was added to the {$list->name} list!";
-    */
-/*
-} catch(AWeberAPIException $exc) { 
-    print "<h3>AWeberAPIException:</h3>"; 
-    print " <li> Type: $exc->type <br>"; 
-    print " <li> Msg : $exc->message <br>"; 
-    print " <li> Docs: $exc->documentation_url <br>"; 
-    print "<hr>"; 
-    exit(1); 
-}*/
 ?>
 
 
@@ -285,31 +242,6 @@ if (!$accessKey || !$accessSecret){
 				</div>	
 			
 				<div id="addinfview" style="display: none;">
-				<!--	1. Select the form to tap into.  	
-					<form method="post">
-						<input type="hidden" name="hiddenvname" id="hiddenvname" />
-					<select id="formlist" name="formid">
-						<option>Select a Form</option>
-						<?php foreach ($infusionForms as $inf) {  ?>
-						<option value="<?php echo $inf->id ?>"><?php echo $inf->title ?></option>
-						<?php } ?>
-					</select><img src="<?php echo plugins_url() ?>/formengine/assets/img/ajax-loader-large.gif" id="formlist_load" width="30px" height="30px" style="display: none;" />
-					<hr />
-					<div id="showinfform">
-					<input type="hidden" id="optHtml" />
-					2. Select a WebForm from Infusionsoft.
-					<select id="infform" name="infid">
-						<option>Select a Form</option>
-						<?php foreach ($webForm as $key => $name) {  ?>
-						<option value="<?php echo $key; ?>"><?php echo $name ?></option>
-						<?php } ?>
-					</select><img src="<?php echo plugins_url() ?>/formengine/assets/img/ajax-loader-large.gif" id="inflist_load" width="30px" height="30px" style="display: none;" /><br />
-					</div>
-					<div id="listings">
-						
-					</div>
-					<input type="submit" name="save" id="addengine" value="Save Changes" class="btn btn-primary" />
-					</form>-->
 					<form method="post"> 
 					<table>
 						<b>Add Form Name to Aweber</b>

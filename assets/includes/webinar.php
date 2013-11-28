@@ -10,7 +10,7 @@ if(isset($_POST['submit'])) {
 	$response = json_decode($citrix->directLogin($_POST['email'], 
 								$_POST['password'], 
 								$_POST['apikey']));	
-	//print_r($response);die();
+	
 	$data = array("apikey" => sanitize_text_field($_POST['apikey']),
 				"email" => sanitize_email($_POST['email']),
 				"password" => sanitize_text_field($_POST['password']),
@@ -86,9 +86,9 @@ if(isset($_POST['save_feed'])) {
 		<div id="tdmfw_content">
 			<div class="tdmfw_box" style="margin-top:0;">
 			<p class="tdmfw_box_title" style="margin-top:0;">
-				<a id="settings"> <?php _e('Webinar Settings ','formengine');?></a>|
-				<a id="feeds"><?php _e('Webinar Feeds','formengine'); ?></a>
-				<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>	
+				<a id="settings"> <?php _e('Webinar Settings ','formengine');?></a>
+				<!--<a id="feeds"><?php _e('Webinar Feeds','formengine'); ?></a>
+				<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>-->	
 			</p>
 			<?php
 			$webinarForms = $wpdb->get_results("SELECT id,title FROM $table");
@@ -180,8 +180,7 @@ if(isset($_POST['save_feed'])) {
 							<td>
 							<select name="lastname-<?php echo $r->id; ?>">
 							<?php foreach ($sortrows as $counter) {
-							//echo "<script>alert('Main   ".$values[0]->last_name."');</script>";	
-							//echo "<script>alert('sub  ".$counter."');</script>";	
+								
 							$type = 'f'.$counter.'_type';
 							$label = 'f'.$counter.'_label';
 							if($r->$type == "input" ) {
