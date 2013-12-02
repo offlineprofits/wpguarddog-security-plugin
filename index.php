@@ -3,11 +3,11 @@
 Plugin Name: JumpForms
 Plugin URI: http://wpfrogs.com
 Description: JumpForms makes it easy to build forms for your WordPress site
-Version: 1.0
+Version: 1.2
 Author: WPfrogs
 Author URI: http://wpfrogs.com
 */
-error_reporting(1);
+
 require_once 'plugin-updates/plugin-update-checker.php';
 
 //require_once 'AWeber-API-PHP-Library-master/aweber_api/aweber_api.php';
@@ -35,9 +35,6 @@ function initformenginepleClient() {
 	$pleClient->initUpdater();
 }
 
-
-
-
 $plugin = plugin_basename(__FILE__); 
 add_action('init','formengine_init');
 add_action('admin_menu','formengine_menu');
@@ -55,6 +52,7 @@ add_action('wp_ajax_infusion', 'infusion_callback');
 function infusion_callback() {
 	
 }
+
 function infselect_callback() {
 	$infusion = new iSDK();
 	$infusion->cfgCon("connectionName");
@@ -463,6 +461,7 @@ function formengine_install() {
 		email text,
 		first_name text,
 		last_name text,
+		webinar text,
 		UNIQUE KEY id (id)
 	);";
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -1699,10 +1698,9 @@ function formengine_form() {
 							<?php 
 							$consumerKey = get_option("consumerkey");
 							$consumerSecret = get_option("consumersecret");
-							
 							$accessKey = get_option("accesskey");
 							$accessSecret = get_option("accesssecret");  
-							if($accessKey && $accessSecret && $forms[0]->aweber) {
+							if($accessKey && $accessSecret && $row->aweber) {
 							?>
 								<td style="width:50%;"><?php _e('Aweber List','formengine'); ?> </td>
 								<td style="width:50%;">

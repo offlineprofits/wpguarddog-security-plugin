@@ -1,7 +1,6 @@
 <?php
 
 if (isset($_POST)) {
-	//print_r($_POST);die();
 	require_once("../../../../../wp-config.php");
 	
     global $wpdb;
@@ -19,31 +18,37 @@ if (isset($_POST)) {
     }
 	if($row->infusion) {
 		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_infusion WHERE formid='$row->id'");
-		$email = $row["f".$val[0]->email."_value"];
-		$fname = $row["f".$val[0]->first_name."_value"];
-		$lname = $row["f".$val[0]->last_name."_value"];
+		$email = $_POST["f".$val[0]->email."_label"];
+		$fname = $_POST["f".$val[0]->first_name."_label"];
+		$lname = $_POST["f".$val[0]->last_name."_label"];
 		$groupId = $val[0]->tagid;
 		require_once("../PHP-iSDK-master/src/isdk.php");
 		$isdk = new iSDK();
-		$infusion->cfgCon("connectionName");
-		$con_id = $infusion->findByEmail($email,array('Id'));
+		$isdk->cfgCon("connectionName");
+		$con_id = $isdk->findByEmail($email,array('Id'));
 		if(!$con_id) {
 			$conDat = array('FirstName' => $fname,
 		            'LastName'  => $lname,
 		            'Email'     => $email);
-			$conID = $infusion->addCon($conDat);
-			$result = $infusion->grpAssign($conID, $groupId);
+			$conID = $isdk->addCon($conDat);
+			if($groupId) {
+				$result = $isdk->grpAssign($conID, $groupId);
+			}
 		}
-	}
+	} 
 	if($row->aweber) {
+		
 		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_aweber WHERE formid='$row->id'");
-		$email = $row["f".$val[0]->email."_value"];
-		$fname = $row["f".$val[0]->first_name."_value"];
-		$lname = $row["f".$val[0]->last_name."_value"];
-		$listid = $fid = $wpdb->get_var("SELECT aweber_list_id FROM $table WHERE id='$row->id'");
-		require_once("../add_subscriber.php");
+		$email = $_POST["f".$val[0]->email."_label"];
+		$fname = $_POST["f".$val[0]->first_name."_label"];
+		$lname = $_POST["f".$val[0]->last_name."_label"];
+		$listid = $wpdb->get_var("SELECT aweber_list_id FROM $table WHERE id='$row->id'");
+		echo $listid;
+		require_once("add_subscriber.php");
 		$aweber = new aweber();
-		$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname, $listid); 
+		if($listid) {
+			$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname, $listid);
+		} 
 	}
 	
     if($row->captcha == "on") {

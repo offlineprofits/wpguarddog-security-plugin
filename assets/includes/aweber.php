@@ -1,10 +1,10 @@
 <?php 
 
-error_reporting( E_ALL );
-ini_set( "display_errors", 1 );
+//error_reporting( E_ALL );
+//ini_set( "display_errors", 1 );
 
-require_once("aweber_api/aweber_api.php");
-	
+//require_once("aweber_api/aweber_api.php");
+include_once( plugin_dir_path( __FILE__ ) . '/aweber_api/aweber_api.php');
 if(isset($_POST['account'])) {
 	$url = explode("?",$_SERVER['REQUEST_URI']);
 	$aurl = 'http://' . $_SERVER['HTTP_HOST'] . $url[0] . '?page=formengine_aweber';
@@ -24,7 +24,8 @@ $table_aweber = $wpdb->prefix . "formengine_aweber";
 $consumerKey = 'Akfb7SmhI9ZjZnfApE2j3HWd';
 $consumerSecret = 'jaUt65dRFyKBFLii46Bng9ZfKK8GfD9aTtXgUA6d'; 
 update_option("consumerkey", $consumerKey);
-update_option("consumersecret", $consumerSecret);	
+update_option("consumersecret", $consumerSecret);
+//$a = new AWeberAPI
 $aweber = new AWeberAPI($consumerKey, $consumerSecret);
 	
 $accessKey = get_option("accesskey");
@@ -180,6 +181,7 @@ if (!$accessKey || !$accessSecret){
 						<td>Email</td>
 						<td>
 						<select name="email-<?php echo $r->id; ?>">
+							<option value=""></option>
 						<?php foreach ($sortrows as $counter) {
 						//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
 						$type = 'f'.$counter.'_type';
@@ -199,6 +201,7 @@ if (!$accessKey || !$accessSecret){
 						<td>First Name</td>
 						<td>
 						<select name="firstname-<?php echo $r->id; ?>">
+							<option value=""></option>
 						<?php foreach ($sortrows as $counter) {
 							
 						$type = 'f'.$counter.'_type';
@@ -218,6 +221,7 @@ if (!$accessKey || !$accessSecret){
 						<td>Last Name</td>
 						<td>
 						<select name="lastname-<?php echo $r->id; ?>">
+							<option value=""></option>
 						<?php foreach ($sortrows as $counter) {
 							//echo "<script>alert('Main   ".$values[0]->last_name."');</script>";	
 						//echo "<script>alert('sub  ".$counter."');</script>";	
@@ -313,7 +317,10 @@ if (!$accessKey || !$accessSecret){
 <script>
 	jQuery(function() {
 		jQuery("#aweber_link").click(function() {
-			confirm("Alert!!! Your current account information will resetted");
+			var res = confirm("Alert!!! Your current account information will be resetted");
+			if(!res) {
+				return false;
+			}
 		})
 	})
 </script>

@@ -66,7 +66,8 @@ if(isset($_POST['save_feed'])) {
 		$data = array(
 					"email" => $_POST['email-'.$id->id],
 					"first_name" => $_POST['firstname-'.$id->id],
-					"last_name" => $_POST['lastname-'.$id->id]
+					"last_name" => $_POST['lastname-'.$id->id],
+					"webinar" => $_POST['sel-webinar-'.$id->id]
 					);	
 		
 		$where = array("id" => $id->id);
@@ -86,9 +87,9 @@ if(isset($_POST['save_feed'])) {
 		<div id="tdmfw_content">
 			<div class="tdmfw_box" style="margin-top:0;">
 			<p class="tdmfw_box_title" style="margin-top:0;">
-				<a id="settings"> <?php _e('Webinar Settings ','formengine');?></a>
-				<!--<a id="feeds"><?php _e('Webinar Feeds','formengine'); ?></a>
-				<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>-->	
+				<a id="settings"> <?php _e('Webinar Settings ','formengine');?></a>|
+				<a id="feeds"><?php _e('Webinar Feeds','formengine'); ?></a>
+				<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>	
 			</p>
 			<?php
 			$webinarForms = $wpdb->get_results("SELECT id,title FROM $table");
@@ -124,13 +125,13 @@ if(isset($_POST['save_feed'])) {
 					<form method="post">
 					<b>Forms Intergrated with Webinar</b>
 					<?php 
-					$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$table_webinar." ON ".$table.".id=".$table_webinar.".formid AND webinar=1");
+					$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$table_webinar." ON ".$table.".id=".$table_webinar.".formid AND $table.webinar=1");
 					echo "<table>";
 					
 					foreach($results as $r) {
 						//echo $r."oooo";die();
 						//echo "SELECT email,first_name,last_name FROM $table_infusionsoft WHERE formid='$r->id'";die("asdasd");
-						$values = $wpdb->get_results("SELECT email,first_name,last_name FROM $table_webinar WHERE formid=$r->id");
+						$values = $wpdb->get_results("SELECT * FROM $table_webinar WHERE formid=$r->id");
 						//print_r($values);//die();
 						//print_r($r);die();
 						$order  = $r->sortorder;
@@ -138,9 +139,30 @@ if(isset($_POST['save_feed'])) {
 						?>
 						<tr><td><a id="<?php $r->id ?>"><?php echo $r->title; ?></a></td></tr>
 						<tr>
+							<td>Select Webinar</td>
+							<td>
+							<select name="sel-webinar-<?php echo $r->id; ?>">
+							<option value=""></option>
+							<?php foreach ($sortrows as $counter) {
+							//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
+							$type = 'f'.$counter.'_type';
+							$label = 'f'.$counter.'_label';
+							if($r->$type == "dropdown" ) {
+							?>
+								<option value="<?php echo $counter; ?>" <?php if($values[0]->webinar == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+							<?php 
+							} 
+							?>
+				
+							<?php } ?>
+							</select>
+							</td>
+						</tr>
+						<tr>
 							<td>Email</td>
 							<td>
 							<select name="email-<?php echo $r->id; ?>">
+							<option value=""></option>
 							<?php foreach ($sortrows as $counter) {
 							//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
 							$type = 'f'.$counter.'_type';
@@ -160,6 +182,7 @@ if(isset($_POST['save_feed'])) {
 							<td>First Name</td>
 							<td>
 							<select name="firstname-<?php echo $r->id; ?>">
+							<option value=""></option>
 							<?php foreach ($sortrows as $counter) {
 								
 							$type = 'f'.$counter.'_type';
@@ -179,6 +202,7 @@ if(isset($_POST['save_feed'])) {
 							<td>Last Name</td>
 							<td>
 							<select name="lastname-<?php echo $r->id; ?>">
+							<option value=""></option>
 							<?php foreach ($sortrows as $counter) {
 								
 							$type = 'f'.$counter.'_type';

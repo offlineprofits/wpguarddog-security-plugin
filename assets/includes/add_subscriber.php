@@ -1,5 +1,5 @@
 <?php 
-require_once('includes/aweber_api/aweber_api.php');
+require_once('aweber_api/aweber_api.php');
 
 class aweber {
 

@@ -1,6 +1,6 @@
 <?php
 
-error_reporting(1);
+
 $infusion = new iSDK();
 //$oldkey = "f3f94c143d755752a2f64d1a53820f90";
 $infusion->cfgCon("connectionName");
@@ -16,7 +16,6 @@ if(isset($_POST['inf_save'])) {
 	if($_POST['addinf'])
 	foreach($_POST['addinf'] as $a) {
 		$wpdb->update($wpdb->prefix."formengine", array("infusion" => 1), array("id" => $a));
-		//echo "INSERT INTO $table_infusionsoft(formid) VALUES('$a')"; die();
 		$i = $wpdb->get_var("SELECT id FROM $table_infusionsoft WHERE id=$a");
 		if(!$i) {
  			$wpdb->query("INSERT INTO $table_infusionsoft(formid) VALUES('$a')");
@@ -138,6 +137,7 @@ if(isset($_POST['settings_submit'])) {
 		<td>Email</td>
 		<td>
 		<select name="email-<?php echo $r->id; ?>">
+			<option value=""></option>
 		<?php foreach ($sortrows as $counter) {
 		//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
 		$type = 'f'.$counter.'_type';
@@ -163,6 +163,7 @@ if(isset($_POST['settings_submit'])) {
 		<td>First Name</td>
 		<td>
 		<select name="firstname-<?php echo $r->id; ?>">
+			<option value=""></option>
 		<?php foreach ($sortrows as $counter) {
 			
 		$type = 'f'.$counter.'_type';
@@ -182,6 +183,7 @@ if(isset($_POST['settings_submit'])) {
 		<td>Last Name</td>
 		<td>
 		<select name="lastname-<?php echo $r->id; ?>">
+			<option value=""></option>
 		<?php foreach ($sortrows as $counter) {
 			//echo "<script>alert('Main   ".$values[0]->last_name."');</script>";	
 		//echo "<script>alert('sub  ".$counter."');</script>";	
