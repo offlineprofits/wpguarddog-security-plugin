@@ -1,22 +1,17 @@
 <?php
 /*
 Plugin Name: JumpForms
-Plugin URI: http://wpfrogs.com
+Plugin URI: http://www.wpfrogs.com/releases/wp-update.php?hash=
 Description: JumpForms makes it easy to build forms for your WordPress site
 Version: 1.2
 Author: WPfrogs
 Author URI: http://wpfrogs.com
 */
 
-require_once 'plugin-updates/plugin-update-checker.php';
+//require_once 'plugin-updates/plugin-update-checker.php';
 
 //require_once 'AWeber-API-PHP-Library-master/aweber_api/aweber_api.php';
 
-$MyUpdateChecker = new PluginUpdateChecker(
-    'http://localhost/~vishnurs/jumpupdate.json',
-    __FILE__,
-    'jumpform'
-);
 require_once('lib/PLE_Client_Util.php');
 require_once("assets/PHP-iSDK-master/src/isdk.php");
 require_once('assets/citrix.php');
@@ -26,7 +21,7 @@ require_once("assets/includes/aweber_api/aweber_api.php");
 ************************************************************/
 
 $pleClient = new PLE_Client_Util();
-function initformenginepleClient() {
+function initjumpformspleClient() {
 	global $pleClient;
 	$pleClient->setPrefix("fe_pfx");
 	$pleClient->setSoftwareName("Jump Forms");
@@ -36,12 +31,12 @@ function initformenginepleClient() {
 }
 
 $plugin = plugin_basename(__FILE__); 
-add_action('init','formengine_init');
-add_action('admin_menu','formengine_menu');
-register_activation_hook(__FILE__,'formengine_install');
-add_filter("plugin_action_links_$plugin", 'formengine_dashboard_link' );
-add_shortcode('formengine','formengine_display');
-add_shortcode('formengine_modal','formengine_display_modal');
+//add_action('init','jumpforms_init');
+add_action('admin_menu','jumpforms_menu');
+register_activation_hook(__FILE__,'jumpforms_install');
+add_filter("plugin_action_links_$plugin", 'jumpforms_dashboard_link' );
+add_shortcode('jumpforms','jumpforms_display');
+add_shortcode('jumpforms_modal','jumpforms_display_modal');
 add_action('media_buttons_context',  'add_my_custom_button');
 add_action( 'admin_enqueue_scripts', 'infusion_tabbing_script' );
 add_action( 'admin_footer',  'add_popup_content' );
@@ -70,8 +65,8 @@ function infselect_callback() {
 
 function formchange_callback() {
 	global $wpdb;
-	$table = $wpdb->prefix . "formengine";
-	$formdata = $wpdb->get_results("SELECT * FROM wp_formengine WHERE id=$_POST[fid]");
+	$table = $wpdb->prefix . "jumpforms";
+	$formdata = $wpdb->get_results("SELECT * FROM wp_jumpforms WHERE id=$_POST[fid]");
 	$formarray = get_object_vars($formdata[0]); 
 	$i = array_search('f1_label', array_keys($formarray));
 	$total = count($formarray);
@@ -97,7 +92,7 @@ function add_my_custom_button($context) {
 }
 function add_popup_content() {
 	global $wpdb;
-	$table = $wpdb->prefix . "formengine";	
+	$table = $wpdb->prefix . "jumpforms";	
 ?>
 <div class="small_message_box">
 	<h1>Message</h1>
@@ -120,25 +115,25 @@ function custom_popup_script() {
 	wp_register_style('popup', plugins_url('/assets/css/popup.css',__FILE__ )); wp_enqueue_style('popup');
 }
 
-function formengine_init() {
+function jumpforms_init() {
 	
 	require('assets/includes/notifier.php');
-	load_plugin_textdomain('formengine', false, dirname(plugin_basename(__FILE__)) . '/assets/lang/');
+	load_plugin_textdomain('jumpforms', false, dirname(plugin_basename(__FILE__)) . '/assets/lang/');
 }
 
-function formengine_dashboard_link($links) { 
-	$settings_link = '<a href="admin.php?page=formengine_dashboard">Dashboard</a>'; 
+function jumpforms_dashboard_link($links) { 
+	$settings_link = '<a href="admin.php?page=jumpforms_dashboard">Dashboard</a>'; 
 	array_unshift($links, $settings_link); 
 	return $links; 
 }
 
 
-function formengine_version() {
+function jumpforms_version() {
 	if ( ! function_exists( 'get_plugins' ) )
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-	$formengine_folder = get_plugins( '/' . plugin_basename( dirname( __FILE__ ) ) );
-	$formengine_file = basename( ( __FILE__ ) );
-	return $formengine_folder[$formengine_file]['Version'];
+	$jumpforms_folder = get_plugins( '/' . plugin_basename( dirname( __FILE__ ) ) );
+	$jumpforms_file = basename( ( __FILE__ ) );
+	return $jumpforms_folder[$jumpforms_file]['Version'];
 }
 
 function create_form_page($id,$title) {
@@ -148,7 +143,7 @@ function create_form_page($id,$title) {
 	global $info;
 	$post = array(
 	  'post_title'    => $title,
-	  'post_content'  => '[formengine id='.$id.']',
+	  'post_content'  => '[jumpforms id='.$id.']',
 	  'post_type'   => 'page',
 	  'post_status'   => 'publish'
 	);
@@ -165,7 +160,7 @@ function create_form_page($id,$title) {
 		$id = $page->ID;
 	}	
 
-	$success = __('Success! A page was created for the form!<span style="float:right;"><a href="post.php?post='.$id.'&action=edit">View Page</a></span>','formengine');
+	$success = __('Success! A page was created for the form!<span style="float:right;"><a href="post.php?post='.$id.'&action=edit">View Page</a></span>','jumpforms');
 }
 
 function create_table($table, $sql){
@@ -178,7 +173,7 @@ function create_table($table, $sql){
 
 function update_form($fid) {
 	global $wpdb;
-	$table = $wpdb->prefix . "formengine";	
+	$table = $wpdb->prefix . "jumpforms";	
 	$webinar = $wpdb->get_var("SELECT webinar FROM $table WHERE id='$_GET[fid]'"); 
 	$orgkey = $wpdb->get_var("SELECT organizerkey FROM $table WHERE id='$_GET[fid]'");
 	$acctkn = $wpdb->get_var("SELECT accesstoken FROM $table WHERE id='$_GET[fid]'");
@@ -228,7 +223,7 @@ function update_form($fid) {
 		else {
 			$optionString =  $wpdb->get_var("SELECT f2_value FROM $table WHERE id='$_GET[fid]'");
 		}
-		$table = $wpdb->prefix . "formengine";
+		$table = $wpdb->prefix . "jumpforms";
 		$inf = NULL;
 		$formid = NULL;
 		$formname = NULL;
@@ -297,8 +292,8 @@ function delete_form($fid) {
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
-	$table2 = $wpdb->prefix . "formengine_data";
+	$table = $wpdb->prefix . "jumpforms";
+	$table2 = $wpdb->prefix . "jumpforms_data";
 	$wpdb->query("DELETE FROM $table WHERE id=$fid");
 	$wpdb->query("DELETE FROM $table2 WHERE fid=$fid");
 }
@@ -308,63 +303,63 @@ function delete_response($id) {
 	global $error;
 	global $success;
 	global $info;
-	$table2 = $wpdb->prefix . "formengine_data";
+	$table2 = $wpdb->prefix . "jumpforms_data";
 	$wpdb->query("DELETE FROM $table2 WHERE id=$id");
 }
 
 function getformfromid($fid) {
 	global $wpdb;
-    $table = $wpdb->prefix . "formengine";
+    $table = $wpdb->prefix . "jumpforms";
   	$form = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
-	return '<a href="?page=formengine_form&fid='.$fid.'#start">'.$form->title.'</a>';
+	return '<a href="?page=jumpforms_form&fid='.$fid.'#start">'.$form->title.'</a>';
 }
 
-function formengine_wipedatabase() {
+function jumpforms_wipedatabase() {
 	global $wpdb;
 	global $alert;
-	$table = $wpdb->prefix . "formengine";
-	$table2 = $wpdb->prefix . "formengine_data";
+	$table = $wpdb->prefix . "jumpforms";
+	$table2 = $wpdb->prefix . "jumpforms_data";
 	$wpdb->query("DROP TABLE IF EXISTS $table");
 	$wpdb->query("DROP TABLE IF EXISTS $table2");
-	delete_option( 'formengine_max' );
+	delete_option( 'jumpforms_max' );
 }
 
-function formengine_menu() {
+function jumpforms_menu() {
 	
-	add_menu_page('JumpForms', 'JumpForms', 'administrator', 'formengine_dashboard', 'formengine_dashboard', plugins_url('/assets/img/jumpform.png',__FILE__ )); 
-	add_submenu_page(NULL, 'New Form', 'New Form', 'administrator', 'formengine_new', 'formengine_new');
-	add_submenu_page(NULL, 'Export Form', 'Export Form', 'administrator', 'formengine_export', 'formengine_export');
-	add_submenu_page(NULL, 'Import Data', 'Import Data', 'administrator', 'formengine_import', 'formengine_import');
-	add_submenu_page(NULL, 'JumpForms Form', 'JumpForms Form', 'administrator', 'formengine_form', 'formengine_form');
-	add_submenu_page(NULL, 'JumpForms Response', 'JumpForms Response', 'administrator', 'formengine_response', 'formengine_response');
-	add_submenu_page(NULL, 'Custom CSS', 'Custom CSS', 'administrator', 'formengine_custom_css', 'formengine_custom_css_options');
-	add_submenu_page('formengine_dashboard', 'Extensions', 'Extensions', 'administrator', 'formengine_extensions', 'formengine_extensions');
-	add_submenu_page('formengine_dashboard', 'Documentation', 'Documentation', 'administrator', 'formengine_documentation', 'formengine_documentation');
-	add_submenu_page('formengine_dashboard', 'InfusionSoft', 'InfusionSoft', 'administrator', 'formengine_infusionsoft', 'formengine_infusionsoft');
-	add_submenu_page('formengine_dashboard', 'Webinar', 'Webinar', 'administrator', 'formengine_webinar', 'formengine_webinar');
-	add_submenu_page(NULL, 'Wipe Database', 'Wipe Database', 'administrator', 'formengine_wipe', 'formengine_wipe');
-	add_submenu_page('formengine_dashboard', "Aweber", "Aweber", "administrator", 'formengine_aweber','formengine_aweber');
-	if(is_plugin_active('formengine_paypal/index.php')) { add_submenu_page(NULL, 'Formengine - PayPal', 'Formengine - PayPal', 'administrator', 'formengine_paypal', 'formengine_paypal'); }
+	add_menu_page('JumpForms', 'JumpForms', 'administrator', 'jumpforms_dashboard', 'jumpforms_dashboard', plugins_url('/assets/img/jumpform.png',__FILE__ )); 
+	add_submenu_page(NULL, 'New Form', 'New Form', 'administrator', 'jumpforms_new', 'jumpforms_new');
+	add_submenu_page(NULL, 'Export Form', 'Export Form', 'administrator', 'jumpforms_export', 'jumpforms_export');
+	add_submenu_page(NULL, 'Import Data', 'Import Data', 'administrator', 'jumpforms_import', 'jumpforms_import');
+	add_submenu_page(NULL, 'JumpForms Form', 'JumpForms Form', 'administrator', 'jumpforms_form', 'jumpforms_form');
+	add_submenu_page(NULL, 'JumpForms Response', 'JumpForms Response', 'administrator', 'jumpforms_response', 'jumpforms_response');
+	add_submenu_page(NULL, 'Custom CSS', 'Custom CSS', 'administrator', 'jumpforms_custom_css', 'jumpforms_custom_css_options');
+	add_submenu_page('jumpforms_dashboard', 'Extensions', 'Extensions', 'administrator', 'jumpforms_extensions', 'jumpforms_extensions');
+	add_submenu_page('jumpforms_dashboard', 'Documentation', 'Documentation', 'administrator', 'jumpforms_documentation', 'jumpforms_documentation');
+	add_submenu_page('jumpforms_dashboard', 'InfusionSoft', 'InfusionSoft', 'administrator', 'jumpforms_infusionsoft', 'jumpforms_infusionsoft');
+	add_submenu_page('jumpforms_dashboard', 'Webinar', 'Webinar', 'administrator', 'jumpforms_webinar', 'jumpforms_webinar');
+	add_submenu_page(NULL, 'Wipe Database', 'Wipe Database', 'administrator', 'jumpforms_wipe', 'jumpforms_wipe');
+	add_submenu_page('jumpforms_dashboard', "Aweber", "Aweber", "administrator", 'jumpforms_aweber','jumpforms_aweber');
+	if(is_plugin_active('jumpforms_paypal/index.php')) { add_submenu_page(NULL, 'Formengine - PayPal', 'Formengine - PayPal', 'administrator', 'jumpforms_paypal', 'jumpforms_paypal'); }
 	
 }
 
 
-function formengine_webinar() {
-	initformenginepleClient();
+function jumpforms_webinar() {
+	initjumpformspleClient();
 	global $pleClient;
 	$activation_form= $pleClient->preCheckLicense();
 	if($activation_form) 
 		return;
 	/****************************************************/
 	wp_register_script('ajax', plugins_url('/assets/js/backend/ajax.js',__FILE__ )); wp_enqueue_script('ajax');
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	require('assets/includes/webinar.php');
 }
 
-function formengine_install() {
+function jumpforms_install() {
 	global $wpdb;
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	$option_name = 'formengine_max' ;
+	$option_name = 'jumpforms_max' ;
 	$new_value = '50' ;
 	
 	if (get_option($option_name) != $new_value) {
@@ -375,11 +370,11 @@ function formengine_install() {
 	    add_option( $option_name, $new_value, $deprecated, $autoload );
 	}
 	// SETUP FORMENGINE TABLE
-	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."formengine");
-	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."formengine_data");
-	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."formengine_infusion");
-	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."formengine_infusion_settings");
-	$table = $wpdb->prefix . "formengine";
+	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."jumpforms");
+	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."jumpforms_data");
+	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."jumpforms_infusion");
+	//$wpdb->query('DROP TABLE IF EXISTS '. $wpdb->prefix."jumpforms_infusion_settings");
+	$table = $wpdb->prefix . "jumpforms";
 	$sql = "CREATE TABLE $table (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
 	  title text NOT NULL,
@@ -411,7 +406,7 @@ function formengine_install() {
 	);";
 	
 	// SETUP FORMENGINE_DATA TABLE	
-	$table2 = $wpdb->prefix . "formengine_data";
+	$table2 = $wpdb->prefix . "jumpforms_data";
 	$sql2 = "CREATE TABLE $table2 (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
 	  date timestamp NOT NULL,
@@ -419,14 +414,14 @@ function formengine_install() {
 	  UNIQUE KEY id (id)
 	);";
 	
-	/*$table3 = $wpdb->prefix . "formengine_rest";
+	/*$table3 = $wpdb->prefix . "jumpforms_rest";
 	$sql3 = "CREATE TABLE $table2 (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
 	  date timestamp NOT NULL,
 	  fid text NOT NULL,
 	  UNIQUE KEY id (id)
 	);";*/
-	$table3 = $wpdb->prefix . "formengine_infusion";
+	$table3 = $wpdb->prefix . "jumpforms_infusion";
 	$sql3 = "CREATE TABLE $table3 (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
 	  formid mediumint(9),
@@ -435,7 +430,7 @@ function formengine_install() {
 	  UNIQUE KEY id (id)
 	);"; 
 	
-	$table4 = $wpdb->prefix . "formengine_infusion_settings";
+	$table4 = $wpdb->prefix . "jumpforms_infusion_settings";
 	$sql4 = "CREATE TABLE $table4 (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
 	  inf_key text,
@@ -443,7 +438,7 @@ function formengine_install() {
 	  UNIQUE KEY id (id)
 	 );";
 	 
-	$table5 = $wpdb->prefix. "formengine_webinar";
+	$table5 = $wpdb->prefix. "jumpforms_webinar";
 	$sql5 = "CREATE TABLE $table5 (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		apikey text,
@@ -454,7 +449,7 @@ function formengine_install() {
 		UNIQUE KEY id (id)
 	);";	
 	
-	$table6 = $wpdb->prefix. "formengine_webinar_data";
+	$table6 = $wpdb->prefix. "jumpforms_webinar_data";
 	$sql6 = "CREATE TABLE $table5 (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		formid mediumint(9),
@@ -475,7 +470,7 @@ function formengine_install() {
 	//create_table($table2, $sql2);
 	//create_table($table3, $sql3);
 	//create_table($table4, $sql4);
-	for($counter = 1; $counter<=get_option('formengine_max');$counter++) {
+	for($counter = 1; $counter<=get_option('jumpforms_max');$counter++) {
 	
 		$label = 'f'.$counter.'_label';
 		$value = 'f'.$counter.'_value';
@@ -494,21 +489,21 @@ function formengine_install() {
 	
 }
 
-function formengine_dashboard() {
-	initformenginepleClient();
+function jumpforms_dashboard() {
+	initjumpformspleClient();
 	global $pleClient;
 	$activation_form = $pleClient->preCheckLicense();
 	if($activation_form) 
 		return;
 	if(wp_script_is('jquery')) { } else { wp_enqueue_script('jquery'); }
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
-	if(isset($_GET['delete_form'])) { delete_form($_GET['delete_form']); $success = __('Success! The form was deleted!<span style="float:right;"><a href="?page=formengine_dashboard">Refresh Data</a></span>'); }
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
+	if(isset($_GET['delete_form'])) { delete_form($_GET['delete_form']); $success = __('Success! The form was deleted!<span style="float:right;"><a href="?page=jumpforms_dashboard">Refresh Data</a></span>'); }
 ?>
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><a class="current"><?php _e('Dashboard','formengine'); ?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><a class="current"><?php _e('Dashboard','jumpforms'); ?></a></li>
 	</ul>
 	
 	<?php
@@ -516,13 +511,9 @@ function formengine_dashboard() {
 			global $wp_admin_bar, $wpdb;
 			if (!is_super_admin() || !is_admin_bar_showing())
 				return;
-				$xml = xxx_get_latest_plugin_version(XXX_PLUGIN_NOTIFIER_CACHE_INTERVAL);
-			if (is_admin())
-				$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . XXX_NOTIFIER_PLUGIN_FOLDER_NAME . '/' .XXX_NOTIFIER_PLUGIN_FILE_NAME);
-			if((string)$xml->latest > (string)$plugin_data['Version']) { ?>
-				<div class="tdmfw_error"><?php _e('There is a new version of JumpForms available to download','formengine'); ?>.<a style="float:right;" href="?page=formengine_update"><?php _e('Update to version','formengine'); ?> <?php echo $xml->latest; ?></a>.</div>
-			<?php }
-		}
+				//$xml = xxx_get_latest_plugin_version(XXX_PLUGIN_NOTIFIER_CACHE_INTERVAL);
+			 }
+		
 	?>
 	
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
@@ -531,34 +522,34 @@ function formengine_dashboard() {
 	<div id="tdmfw_content">
 
 		<?php
-			$tablecheck = $wpdb->get_var("show tables like '". $wpdb->prefix . "formengine'");
+			$tablecheck = $wpdb->get_var("show tables like '". $wpdb->prefix . "jumpforms'");
 			if($tablecheck) {
 		?>	
 
 		
 		<?php
 			global $wpdb;
-			$table = $wpdb->prefix . "formengine_data";
+			$table = $wpdb->prefix . "jumpforms_data";
 			$forms = $wpdb->get_var("SELECT count(*) FROM $table");
 			$subs = $wpdb->get_results("SELECT * FROM $table ORDER BY date DESC");
 			if($forms > 0) { ?>
 		
 		<div class="tdmfw_box">
-			<p class="tdmfw_box_title"><?php _e('Latest Responses','formengine'); ?></p>
+			<p class="tdmfw_box_title"><?php _e('Latest Responses','jumpforms'); ?></p>
 			<div class="tdmfw_box_content">
 
 
 				<table class="tdmfw_table"> 
 					<thead>
 						<tr valign="top">
-							<th><?php _e('Date/Time','formengine'); ?></th>
-							<th><?php _e('Form','formengine'); ?></th>
+							<th><?php _e('Date/Time','jumpforms'); ?></th>
+							<th><?php _e('Form','jumpforms'); ?></th>
 						</tr>
 					</thead>
 					<tbody>
 					<?php $i = 0; foreach ($subs as $sub) { ?>
 						<tr valign="top">
-						<td width="50%"><a href="?page=formengine_response&fid=<?php echo $sub->fid; ?>&id=<?php echo $sub->id; ?>"><?php echo date("j F Y", strtotime($sub->date)); ?> at <?php echo date("H:ia", strtotime($sub->date)); ?></a></td>
+						<td width="50%"><a href="?page=jumpforms_response&fid=<?php echo $sub->fid; ?>&id=<?php echo $sub->id; ?>"><?php echo date("j F Y", strtotime($sub->date)); ?> at <?php echo date("H:ia", strtotime($sub->date)); ?></a></td>
 						<td width="50%"><?php echo getformfromid($sub->fid);?></td>
 						</tr>
 					<?php if (++$i == 3) break; } ?>
@@ -573,37 +564,37 @@ function formengine_dashboard() {
 		
 		<?php
 			global $wpdb;
-			$table = $wpdb->prefix . "formengine";
-			$table2 = $wpdb->prefix . "formengine_data";
+			$table = $wpdb->prefix . "jumpforms";
+			$table2 = $wpdb->prefix . "jumpforms_data";
 			$forms = $wpdb->get_var("SELECT count(*) FROM $table");
 			if($forms > 0) { ?>
 		
 			<div class="tdmfw_box">
-				<p class="tdmfw_box_title"><?php _e('My Forms','formengine'); ?></p>
+				<p class="tdmfw_box_title"><?php _e('My Forms','jumpforms'); ?></p>
 				<div class="tdmfw_box_content">
 					<table class="tdmfw_table">
 						<thead>
 							<tr>
-								<th style="width:47%"><?php _e('Form','formengine'); ?></th>
-								<th style="width:10%;text-align:center;"><?php _e('Views','formengine'); ?></th>
-								<th style="width:10%;text-align:center;"><?php _e('Responses','formengine'); ?></th>
-								<th style="width:13%;text-align:center;"><?php _e('Action','formengine'); ?></th>
+								<th style="width:47%"><?php _e('Form','jumpforms'); ?></th>
+								<th style="width:10%;text-align:center;"><?php _e('Views','jumpforms'); ?></th>
+								<th style="width:10%;text-align:center;"><?php _e('Responses','jumpforms'); ?></th>
+								<th style="width:13%;text-align:center;"><?php _e('Action','jumpforms'); ?></th>
 							</tr>
 						</thead>
 						<tbody>
 						
 							<?php
-								$table = $wpdb->prefix . "formengine";
+								$table = $wpdb->prefix . "jumpforms";
 								$forms = $wpdb->get_results("SELECT * FROM $table");
 								foreach ($forms as $form) {
 							?>
 
 							<tr valign="top">
-							<td><?php echo '<a href="?page=formengine_form&fid='.$form->id.'">'.$form->title.'</a>';?></td>
+							<td><?php echo '<a href="?page=jumpforms_form&fid='.$form->id.'">'.$form->title.'</a>';?></td>
 							<td style="text-align:center;"><?php if($form->views) { $views = $form->views; } else { $views = '0';} echo $views;?></td>
 							<td style="text-align:center;"><?php echo $wpdb->get_var("SELECT count(*) FROM $table2 WHERE fid = $form->id");?></td>
 							<td style="text-align:center;">
-								<a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=formengine_dashboard&amp;delete_form=<?php echo $form->id;?>" onclick="return confirm('<?php _e('Are you sure you want to delete this form?','formengine'); ?>')"><?php _e('Delete Form','formengine'); ?></a></td>
+								<a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=jumpforms_dashboard&amp;delete_form=<?php echo $form->id;?>" onclick="return confirm('<?php _e('Are you sure you want to delete this form?','jumpforms'); ?>')"><?php _e('Delete Form','jumpforms'); ?></a></td>
 							</tr>
 							
 							<?php } ?>
@@ -614,14 +605,14 @@ function formengine_dashboard() {
 				</div>
 			</div>
 			
-			<a style="margin-top:20px;" class="button-primary" href="?page=formengine_new"><?php _e('Create New Form','formengine'); ?></a>
-			<a style="margin-top:20px;"class="button-secondary" href="?page=formengine_custom_css"><?php _e('Manage Custom CSS','formengine'); ?></a>
-			<a style="margin-top:20px;float:right;text-transform:uppercase;" class="button-secondary" href="?page=formengine_wipe"><?php _e('Remove all data','formengine'); ?></a>
+			<a style="margin-top:20px;" class="button-primary" href="?page=jumpforms_new"><?php _e('Create New Form','jumpforms'); ?></a>
+			<a style="margin-top:20px;"class="button-secondary" href="?page=jumpforms_custom_css"><?php _e('Manage Custom CSS','jumpforms'); ?></a>
+			<a style="margin-top:20px;float:right;text-transform:uppercase;" class="button-secondary" href="?page=jumpforms_wipe"><?php _e('Remove all data','jumpforms'); ?></a>
 			
-			<?php } else { echo '<div class="tdmfw_inline_error">'.__('You do not have any forms','formengine').'. <a href="?page=formengine_new">'.__('Create New Form','formengine').'</a></div>';  } ?>
+			<?php } else { echo '<div class="tdmfw_inline_error">'.__('You do not have any forms','jumpforms').'. <a href="?page=jumpforms_new">'.__('Create New Form','jumpforms').'</a></div>';  } ?>
 
 		<?php
-			} else { echo '<div class="tdmfw_inline_error" style="margin-top:0;">'.__('All JumpForms data has been wiped. Please reactivate the plugin','formengine'); } 
+			} else { echo '<div class="tdmfw_inline_error" style="margin-top:0;">'.__('All JumpForms data has been wiped. Please reactivate the plugin','jumpforms'); } 
 		?>	
 
 	</div><!-- /tdmfw_content -->
@@ -629,39 +620,39 @@ function formengine_dashboard() {
 
 <?php }
 
-function formengine_new() {
+function jumpforms_new() {
 	
 	if(wp_script_is('jquery')) { } else { wp_enqueue_script('jquery'); }
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	
 	if(isset($_POST['new_form_build'])){
-		if($_POST['new_form'] == 'blank') { formengine_blank_form(); }
-		elseif ($_POST['new_form'] == 'application') { formengine_application_form(); }
-		elseif ($_POST['new_form'] == 'booking') { formengine_booking_form(); }
-		elseif ($_POST['new_form'] == 'competition') { formengine_competition_form(); }
-		elseif ($_POST['new_form'] == 'contact') { formengine_contact_form(); }
-		elseif ($_POST['new_form'] == 'delivery') { formengine_delivery_form(); }
-		elseif ($_POST['new_form'] == 'feedback') { formengine_feedback_form(); }
-		elseif ($_POST['new_form'] == 'upload') { formengine_upload_form(); }
+		if($_POST['new_form'] == 'blank') { jumpforms_blank_form(); }
+		elseif ($_POST['new_form'] == 'application') { jumpforms_application_form(); }
+		elseif ($_POST['new_form'] == 'booking') { jumpforms_booking_form(); }
+		elseif ($_POST['new_form'] == 'competition') { jumpforms_competition_form(); }
+		elseif ($_POST['new_form'] == 'contact') { jumpforms_contact_form(); }
+		elseif ($_POST['new_form'] == 'delivery') { jumpforms_delivery_form(); }
+		elseif ($_POST['new_form'] == 'feedback') { jumpforms_feedback_form(); }
+		elseif ($_POST['new_form'] == 'upload') { jumpforms_upload_form(); }
 		elseif ($_POST['new_form'] == 'import') {
 			
 			$sql = stripslashes_deep($_POST['sql']);		
 			$result = $wpdb->query(stripslashes_deep($sql));
 	
 			if (!$result) {
-				$error = __('Error! The form could not be imported.','formengine');
+				$error = __('Error! The form could not be imported.','jumpforms');
 			} else {
-				$success = __('Success! The form was imported.','formengine');
+				$success = __('Success! The form was imported.','jumpforms');
 			}		
 		}
 		elseif ($_POST['new_form'] == 'webinar') {
-			formengine_webinar_form();
+			jumpforms_webinar_form();
 		}
 		
 	}
@@ -669,10 +660,10 @@ function formengine_new() {
 ?>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><a class="current"><?php _e('New Form','formengine'); ?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><a class="current"><?php _e('New Form','jumpforms'); ?></a></li>
 	</ul>
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
 	<?php if(isset($success)) { echo '<div class="tdmfw_success">'.$success.'</div>'; } ?>
@@ -688,11 +679,11 @@ function formengine_new() {
 		}
 	</script>
 		
-		<?php _e('Choose a template from the list below','formengine');echo': '; ?>
+		<?php _e('Choose a template from the list below','jumpforms');echo': '; ?>
 		
 			<div class="tdmfw_box">
 				<form method="post" action="">
-				<p class="tdmfw_box_title"><?php _e('Form Templates','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=4"><?php _e('Help?','formengine'); ?></a></p>
+				<p class="tdmfw_box_title"><?php _e('Form Templates','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=4"><?php _e('Help?','jumpforms'); ?></a></p>
 				<div class="tdmfw_box_content" style="margin-bottom:20px;">
 					<table class="tdmfw_table">
 						<thead>
@@ -702,28 +693,28 @@ function formengine_new() {
 						</thead>
 						<tbody>
 							
-							<tr><td><input type="radio" name="new_form" id="blank" value="blank" checked="checked" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Blank','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="application" value="application" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Application','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="booking" value="booking" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Booking','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="competition" value="competition" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Competition','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="contact" value="contact" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Contact','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="delivery" value="delivery" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Delivery','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="feedback" value="feedback" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Feedback','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="upload" value="upload" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Upload','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="import" value="import" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Import','formengine'); ?></span></td></tr>
-							<tr><td><input type="radio" name="new_form" id="webinar" value="webinar" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Webinar','formengine'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="blank" value="blank" checked="checked" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Blank','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="application" value="application" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Application','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="booking" value="booking" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Booking','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="competition" value="competition" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Competition','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="contact" value="contact" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Contact','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="delivery" value="delivery" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Delivery','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="feedback" value="feedback" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Feedback','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="upload" value="upload" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Upload','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="import" value="import" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Import','jumpforms'); ?></span></td></tr>
+							<tr><td><input type="radio" name="new_form" id="webinar" value="webinar" onclick="checkcustom()"><span style="padding:0 0 0 8px;"><?php _e('Webinar','jumpforms'); ?></span></td></tr>
 														
 							
 							<tr id="toggle" style="display:none;">
-								<td><span style="float:left;padding:5px 0 8px 0;"><?php _e('Paste your import code below:','formengine'); ?></span><br/>
+								<td><span style="float:left;padding:5px 0 8px 0;"><?php _e('Paste your import code below:','jumpforms'); ?></span><br/>
 								<textarea name="sql" id="sql" style="float:left;width:528px;height:100px;"></textarea>		
 							</td></tr>
 						</tbody>
 					</table>
 				</div>
 				
-				<input class="button-primary" type="submit" name="new_form_build" id="new_form_build" value="<?php _e('Build Form','formengine'); ?>" />
-				<a class="button-secondary" href="?page=formengine_dashboard"><?php _e('Go Back','formengine'); ?></a>
+				<input class="button-primary" type="submit" name="new_form_build" id="new_form_build" value="<?php _e('Build Form','jumpforms'); ?>" />
+				<a class="button-secondary" href="?page=jumpforms_dashboard"><?php _e('Go Back','jumpforms'); ?></a>
 				
 				</form>
 	
@@ -732,13 +723,13 @@ function formengine_new() {
 
 <?php }
 
-function formengine_blank_form () {		
+function jumpforms_blank_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -767,16 +758,16 @@ function formengine_blank_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 }
 
-function formengine_application_form () {		
+function jumpforms_application_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -841,17 +832,17 @@ function formengine_application_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_booking_form () {		
+function jumpforms_booking_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -904,17 +895,17 @@ function formengine_booking_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_competition_form () {		
+function jumpforms_competition_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -959,17 +950,17 @@ function formengine_competition_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_contact_form () {		
+function jumpforms_contact_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -1014,17 +1005,17 @@ function formengine_contact_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_delivery_form () {		
+function jumpforms_delivery_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -1069,17 +1060,17 @@ function formengine_delivery_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_feedback_form () {		
+function jumpforms_feedback_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -1124,17 +1115,17 @@ function formengine_feedback_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_upload_form () {		
+function jumpforms_upload_form () {		
 
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$wpdb->insert($table, array(
 		'title' => 'Form',
 		'notify' => 'off',
@@ -1175,16 +1166,16 @@ function formengine_upload_form () {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_webinar_form() {
+function jumpforms_webinar_form() {
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	
 	$wpdb->insert($table, array(
 		'title' => 'Form',
@@ -1241,16 +1232,16 @@ function formengine_webinar_form() {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_infusion_form() {
+function jumpforms_infusion_form() {
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	
 	$wpdb->insert($table, array(
 		'title' => 'Form',
@@ -1319,27 +1310,27 @@ function formengine_infusion_form() {
 		'title' => 'Form '.$fid,
 	), array( 'id' => $fid ) );
 	
-	$success = __('Success! The form was created!','formengine').'<span style="float:right;"><a href="?page=formengine_dashboard">'.__('Go Back','formengine').'</a></span>';
+	$success = __('Success! The form was created!','jumpforms').'<span style="float:right;"><a href="?page=jumpforms_dashboard">'.__('Go Back','jumpforms').'</a></span>';
 	
 }
 
-function formengine_wipe() { 
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+function jumpforms_wipe() { 
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	
-	if(isset($_POST['wipe'])) { formengine_wipedatabase(); 	$error = __('All JumpForms data removed!','formengine'); }
+	if(isset($_POST['wipe'])) { jumpforms_wipedatabase(); 	$error = __('All JumpForms data removed!','jumpforms'); }
 	
 	?>
 	
 	<div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><a class="current"><?php _e('Remove All Data','formengine'); ?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><a class="current"><?php _e('Remove All Data','jumpforms'); ?></a></li>
 	</ul>
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
 	<?php if(isset($success)) { echo '<div class="tdmfw_success">'.$success.'</div>'; } ?>
@@ -1348,20 +1339,20 @@ function formengine_wipe() {
 	<div id="tdmfw_content">
 
 		<?php
-			$tablecheck = $wpdb->get_var("show tables like '". $wpdb->prefix . "formengine'");
+			$tablecheck = $wpdb->get_var("show tables like '". $wpdb->prefix . "jumpforms'");
 			if($tablecheck) {
 		?>
 
 	<form method="post" action="">
-	<?php _e('This action will remove all JumpForms data from the WordPress database.','formengine'); ?><br/><br/>
-	<?php _e('To continue using JumpForms after data has been removed, please reactivate the plugin.','formengine'); ?><br/><br/>
-	<?php _e('Are you sure you want to continue?','formengine'); ?><br/>
-	<input type="submit" name="wipe" class="button-primary" style="margin-top:20px;" value="<?php _e('Yes - REMOVE ALL DATA','formengine'); ?>">
-	<a class="button-secondary" href="?page=formengine_dashboard"><?php _e('No - Cancel','formengine'); ?></a>
+	<?php _e('This action will remove all JumpForms data from the WordPress database.','jumpforms'); ?><br/><br/>
+	<?php _e('To continue using JumpForms after data has been removed, please reactivate the plugin.','jumpforms'); ?><br/><br/>
+	<?php _e('Are you sure you want to continue?','jumpforms'); ?><br/>
+	<input type="submit" name="wipe" class="button-primary" style="margin-top:20px;" value="<?php _e('Yes - REMOVE ALL DATA','jumpforms'); ?>">
+	<a class="button-secondary" href="?page=jumpforms_dashboard"><?php _e('No - Cancel','jumpforms'); ?></a>
 	</form>
 	
 		<?php
-			} else { echo '<div class="tdmfw_inline_error" style="margin-top:0;">'.__('All JumpForms data has been wiped. Please reactivate the plugin','formengine'); }  
+			} else { echo '<div class="tdmfw_inline_error" style="margin-top:0;">'.__('All JumpForms data has been wiped. Please reactivate the plugin','jumpforms'); }  
 		?>	
 
 	</div>
@@ -1370,38 +1361,38 @@ function formengine_wipe() {
 
 	<?php }
 	
-function formengine_export() { 
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+function jumpforms_export() { 
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	global $wpdb;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$fid = $_GET['fid'];
 	$form = $wpdb->get_row("SELECT * FROM $table WHERE id = '$fid'");
 ?>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><?php echo '<a href="?page=formengine_form&fid='.$form->id.'">'.$form->title.'</a>';?></li>
-	    <li><a class="current"><?php _e('Export Form','formengine'); ?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><?php echo '<a href="?page=jumpforms_form&fid='.$form->id.'">'.$form->title.'</a>';?></li>
+	    <li><a class="current"><?php _e('Export Form','jumpforms'); ?></a></li>
 	</ul>
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
 	<?php if(isset($success)) { echo '<div class="tdmfw_success">'.$success.'</div>'; } ?>
 	<?php if(isset($info)) { echo '<div class="tdmfw_info">'.$info.'</div>'; } ?>
 	<div id="tdmfw_content">
 
-	<?php _e('In order to re-import this form, please make a copy of the code below','formengine'); ?>.<br/><br/>
+	<?php _e('In order to re-import this form, please make a copy of the code below','jumpforms'); ?>.<br/><br/>
 
-	<form id="formengine" action="" method="POST" enctype="multipart/form-data">
+	<form id="jumpforms" action="" method="POST" enctype="multipart/form-data">
 	
 		<div class="tdmfw_box" style="margin-top:0;">
-			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Export Form','formengine'); ?></p>
+			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Export Form','jumpforms'); ?></p>
 			
 			<div class="tdmfw_box_content">			
 
 <textarea name="export_code" disabled="disabled" style="float:left;width:538px;height:300px;font-family:courier;"><?php
 		if(isset($q)) { } else { $q = ''; }
-		$q .= "INSERT INTO `wp_formengine` VALUES(";
+		$q .= "INSERT INTO `wp_jumpforms` VALUES(";
 		$q .= "'', ";
 		$q .= "'".$form->title."', ";
 		$q .= "'".$form->notify."', ";
@@ -1419,7 +1410,7 @@ function formengine_export() {
 		$q .= "'".$form->progress."', ";
 		$q .= "'".$form->views."', ";
 
-		$fields = get_option('formengine_max');
+		$fields = get_option('jumpforms_max');
 		for($counter = 1; $counter<=$fields;$counter++) {
 			
 			$label = 'f'.$counter.'_label';
@@ -1445,7 +1436,7 @@ function formengine_export() {
 			</div>
 		</div>
 	
-	<a style="margin-top:20px;" class="button-secondary" href="<?php echo '?page=formengine_form&fid='.$form->id;?>"><?php _e('Go Back','formengine'); ?></a>
+	<a style="margin-top:20px;" class="button-secondary" href="<?php echo '?page=jumpforms_form&fid='.$form->id;?>"><?php _e('Go Back','jumpforms'); ?></a>
 	
 	</form>
 	
@@ -1455,14 +1446,14 @@ function formengine_export() {
 
 <?php }
 
-function formengine_import() { 
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+function jumpforms_import() { 
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
-	$table = $wpdb->prefix . "formengine";
-	$table2 = $wpdb->prefix . "formengine_data";
+	$table = $wpdb->prefix . "jumpforms";
+	$table2 = $wpdb->prefix . "jumpforms_data";
 	$fid = $_GET['fid'];
 	$form = $wpdb->get_row("SELECT * FROM $table WHERE id = '$fid'");
 	
@@ -1470,7 +1461,7 @@ function formengine_import() {
 		if ($_FILES["file"]["error"] > 0) {
 		} else {
 		
-		$fields = get_option('formengine_max');
+		$fields = get_option('jumpforms_max');
 		for($counter = 1; $counter<=$fields;$counter++) {
 			
 			$label = 'f'.$counter;
@@ -1486,7 +1477,7 @@ function formengine_import() {
 			}
 			
 		}					
-			$result = mysql_query("LOAD DATA LOCAL INFILE '".$_FILES["file"]["tmp_name"]."' INTO TABLE wp_formengine_data Fields terminated by ',' ENCLOSED BY '\"' LINES terminated by '\n' IGNORE 1 LINES(fid, $q)");
+			$result = mysql_query("LOAD DATA LOCAL INFILE '".$_FILES["file"]["tmp_name"]."' INTO TABLE wp_jumpforms_data Fields terminated by ',' ENCLOSED BY '\"' LINES terminated by '\n' IGNORE 1 LINES(fid, $q)");
 			if (!$result) {
 			    $error = __('Error! Data could not be imported!');
 			} else {
@@ -1499,30 +1490,30 @@ function formengine_import() {
 ?>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><?php echo '<a href="?page=formengine_form&fid='.$form->id.'">'.$form->title.'</a>';?></li>
-	    <li><a class="current"><?php _e('Import Data','formengine'); ?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><?php echo '<a href="?page=jumpforms_form&fid='.$form->id.'">'.$form->title.'</a>';?></li>
+	    <li><a class="current"><?php _e('Import Data','jumpforms'); ?></a></li>
 	</ul>
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
 	<?php if(isset($success)) { echo '<div class="tdmfw_success">'.$success.'</div>'; } ?>
 	<?php if(isset($info)) { echo '<div class="tdmfw_info">'.$info.'</div>'; } ?>
 	<div id="tdmfw_content">
 	
-	<?php _e('To import data into this form please upload a CSV file using the form below','formengine'); ?>.<br/><br/>
+	<?php _e('To import data into this form please upload a CSV file using the form below','jumpforms'); ?>.<br/><br/>
 
-	<form id="formengine" action="" method="POST" enctype="multipart/form-data">
+	<form id="jumpforms" action="" method="POST" enctype="multipart/form-data">
 	
 		<div class="tdmfw_box" style="margin-top:0;">
-			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Import Data','formengine'); ?></p>
+			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Import Data','jumpforms'); ?></p>
 			
 			<div class="tdmfw_box_content">			
 				<input type="file" name="file">
 		</div>
 	
-	<input type="submit" name="import_data" class="button-primary" style="margin-top:20px;" value="<?php _e('Import','formengine'); ?>">
-	<a class="button-secondary" href="<?php echo '?page=formengine_form&fid='.$form->id;?>"><?php _e('Go Back','formengine'); ?></a>
+	<input type="submit" name="import_data" class="button-primary" style="margin-top:20px;" value="<?php _e('Import','jumpforms'); ?>">
+	<a class="button-secondary" href="<?php echo '?page=jumpforms_form&fid='.$form->id;?>"><?php _e('Go Back','jumpforms'); ?></a>
 	
 	</form>
 	
@@ -1531,11 +1522,11 @@ function formengine_import() {
 
 <?php }
 
-function formengine_form() {
+function jumpforms_form() {
 	if(wp_script_is('jquery')) { } else { wp_enqueue_script('jquery'); }
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	wp_register_script('sortorder', plugins_url('/assets/js/backend/sortorder.js',__FILE__ )); wp_enqueue_script('sortorder');
-	wp_register_script('formengine', plugins_url('/assets/js/backend/formengine.js',__FILE__ )); wp_enqueue_script('formengine');
+	wp_register_script('jumpforms', plugins_url('/assets/js/backend/jumpforms.js',__FILE__ )); wp_enqueue_script('jumpforms');
 	wp_register_script('update-validation', plugins_url('/assets/js/backend/update-validation.js',__FILE__ )); wp_enqueue_script('update-validation');
 	global $wpdb;
 	global $error;
@@ -1544,16 +1535,16 @@ function formengine_form() {
 	if(isset($_GET['fid'])) { $fid = $_GET['fid']; }
 	if(isset($_POST['update_form'])){update_form($fid);}
 	if(isset($_POST['create_form_page'])){create_form_page($fid,$_POST['title']);}
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$form = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
 	$forms = $wpdb->get_results("SELECT * FROM $table WHERE id = '$fid'");
-	if(isset($_GET['delete_response'])) { delete_response($_GET['delete_response']); $success = __('Success! The response was deleted!','formengine'); }
+	if(isset($_GET['delete_response'])) { delete_response($_GET['delete_response']); $success = __('Success! The response was deleted!','jumpforms'); }
 ?>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
 	    <li><a class="current"><?php echo $form->title;?></a></li>
 	</ul>
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
@@ -1564,7 +1555,7 @@ function formengine_form() {
 	
 	
 		<div class="tdmfw_box_half" style="margin-top:0;">
-			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Form Title','formengine'); ?></p>
+			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Form Title','jumpforms'); ?></p>
 			<div class="tdmfw_box_content">
 				<input name="title" class="tdmfw_input" type="text" value="<?php echo $form->title;?>">
 			</div>
@@ -1572,12 +1563,12 @@ function formengine_form() {
 		
 		<?php
 		    global $wpdb;
-		    $table = $wpdb->prefix . "formengine";
-			$table2 = $wpdb->prefix . "formengine_data";
+		    $table = $wpdb->prefix . "jumpforms";
+			$table2 = $wpdb->prefix . "jumpforms_data";
 		    $forms = $wpdb->get_var("SELECT count(*) FROM $table");
 		    $row = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
 			$rows = $wpdb->get_var("SELECT count(*) FROM $table2 WHERE fid = $fid ");
-			$webval = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."formengine_webinar");
+			$webval = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."jumpforms_webinar");
 		?>
 
 		<?php
@@ -1591,14 +1582,14 @@ function formengine_form() {
 		?>
 		
 		<div class="tdmfw_box_half tdmfw_box_half_end" style="margin-top:0;">
-			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Statistics','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=10"><?php _e('Help?','formengine'); ?></a></p>
+			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Statistics','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=10"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 				<input name="title" style="border:1px solid #fff;padding-left:0;padding-right:0;" disabled="disabled" class="tdmfw_input" type="text" value="<?php echo $stats; ?>">
 			</div>
 		</div>
 		
 		<div class="tdmfw_box">
-			<p class="tdmfw_box_title"><?php _e('Configuration','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=5"><?php _e('Help?','formengine'); ?></a></p>
+			<p class="tdmfw_box_title"><?php _e('Configuration','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=5"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 
 					<table class="tdmfw_table">
@@ -1637,22 +1628,22 @@ function formengine_form() {
 							
 							<?php endif; ?>
 							<tr>
-							<td style="width:50%;"><?php _e('Progress Bars','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Progress Bars','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<select name="progress" style="width:269px;">
-									<option value="off"<?php if($form->progress == 'off') {echo " selected='selected'";} ?>><?php _e('Off','formengine'); ?></option>
-									<option value="progress"<?php if($form->progress == 'progress') {echo " selected='selected'";} ?>><?php _e('Basic','formengine'); ?></option>
-									<option value="progress progress-striped"<?php if($form->progress == 'progress progress-striped') {echo " selected='selected'";} ?>><?php _e('Striped','formengine'); ?></option>
-									<option value="progress progress-striped active"<?php if($form->progress == 'progress progress-striped active') {echo " selected='selected'";} ?>><?php _e('Animated','formengine'); ?></option>
+									<option value="off"<?php if($form->progress == 'off') {echo " selected='selected'";} ?>><?php _e('Off','jumpforms'); ?></option>
+									<option value="progress"<?php if($form->progress == 'progress') {echo " selected='selected'";} ?>><?php _e('Basic','jumpforms'); ?></option>
+									<option value="progress progress-striped"<?php if($form->progress == 'progress progress-striped') {echo " selected='selected'";} ?>><?php _e('Striped','jumpforms'); ?></option>
+									<option value="progress progress-striped active"<?php if($form->progress == 'progress progress-striped active') {echo " selected='selected'";} ?>><?php _e('Animated','jumpforms'); ?></option>
 								</select>
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Thank You Page','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Thank You Page','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<select name="redirect" style="width:269px;">
-								<option value="<?php echo get_bloginfo('url');?>"<?php if($form->redirect == get_bloginfo('url')) {echo " selected='selected'";} ?>><?php _e('Home','formengine'); ?></option>
+								<option value="<?php echo get_bloginfo('url');?>"<?php if($form->redirect == get_bloginfo('url')) {echo " selected='selected'";} ?>><?php _e('Home','jumpforms'); ?></option>
 								<?php 
 								$pages = get_pages(); 
 								foreach ( $pages as $page ) { ?>
@@ -1664,10 +1655,10 @@ function formengine_form() {
 							</tr>
 
 							<tr>
-							<td style="width:50%;"><?php _e('Error Page','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Error Page','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<select name="errorredirect" style="width:269px;">
-								<option value="<?php echo get_bloginfo('url');?>"<?php if($form->errorredirect == get_bloginfo('url')) {echo " selected='selected'";} ?>><?php _e('Home','formengine'); ?></option>
+								<option value="<?php echo get_bloginfo('url');?>"<?php if($form->errorredirect == get_bloginfo('url')) {echo " selected='selected'";} ?>><?php _e('Home','jumpforms'); ?></option>
 								<?php 
 								$pages = get_pages(); 
 								foreach ( $pages as $page ) { ?>
@@ -1679,17 +1670,17 @@ function formengine_form() {
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('CAPTCHA','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('CAPTCHA','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<select name="captcha" style="width:269px;">
-								<option value="off"<?php if($form->captcha == 'off') {echo " selected='selected'";} ?>><?php _e('Disabled','formengine'); ?></option>
-								<option value="on"<?php if($form->captcha == 'on') {echo " selected='selected'";} ?>><?php _e('Enabled','formengine'); ?></option>
+								<option value="off"<?php if($form->captcha == 'off') {echo " selected='selected'";} ?>><?php _e('Disabled','jumpforms'); ?></option>
+								<option value="on"<?php if($form->captcha == 'on') {echo " selected='selected'";} ?>><?php _e('Enabled','jumpforms'); ?></option>
 								</select>	
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Modal Text','formengine'); ?> &mdash; <a href="?page=formengine_documentation&did=5"><?php _e('Help?','formengine'); ?></a></td>
+							<td style="width:50%;"><?php _e('Modal Text','jumpforms'); ?> &mdash; <a href="?page=jumpforms_documentation&did=5"><?php _e('Help?','jumpforms'); ?></a></td>
 							<td style="width:50%;">
 								<input name="modalbutton" class="tdmfw_input" type="text" style="width:269px;" value="<?php echo $form->modalbutton;?>">
 							</td>
@@ -1702,7 +1693,7 @@ function formengine_form() {
 							$accessSecret = get_option("accesssecret");  
 							if($accessKey && $accessSecret && $row->aweber) {
 							?>
-								<td style="width:50%;"><?php _e('Aweber List','formengine'); ?> </td>
+								<td style="width:50%;"><?php _e('Aweber List','jumpforms'); ?> </td>
 								<td style="width:50%;">
 									<select name="aweber" style="width:269px;">
 									<option>Select a List</option>
@@ -1734,49 +1725,49 @@ function formengine_form() {
 		</div>
 		
 		<div class="tdmfw_box">
-			<p class="tdmfw_box_title"><?php _e('Notifications','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=6"><?php _e('Help?','formengine'); ?></a></p>
+			<p class="tdmfw_box_title"><?php _e('Notifications','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=6"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 				<table class="tdmfw_table">
 			
 			
 			
 							<tr>
-							<td style="width:50%;"><?php _e('Notifications','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Notifications','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<select name="notify" style="width:269px;">
-									<option value="off"<?php if($form->notify == 'off') {echo " selected='selected'";} ?>><?php _e('Off','formengine'); ?></option>
-									<option value="admin"<?php if($form->notify == 'admin') {echo " selected='selected'";} ?>><?php _e('Admin Only','formengine'); ?></option>
-									<option value="user"<?php if($form->notify == 'user') {echo " selected='selected'";} ?>><?php _e('User Only','formengine'); ?></option>
-									<option value="adminuser"<?php if($form->notify == 'adminuser') {echo " selected='selected'";} ?>><?php _e('Admin And User','formengine'); ?></option>
+									<option value="off"<?php if($form->notify == 'off') {echo " selected='selected'";} ?>><?php _e('Off','jumpforms'); ?></option>
+									<option value="admin"<?php if($form->notify == 'admin') {echo " selected='selected'";} ?>><?php _e('Admin Only','jumpforms'); ?></option>
+									<option value="user"<?php if($form->notify == 'user') {echo " selected='selected'";} ?>><?php _e('User Only','jumpforms'); ?></option>
+									<option value="adminuser"<?php if($form->notify == 'adminuser') {echo " selected='selected'";} ?>><?php _e('Admin And User','jumpforms'); ?></option>
 								</select>
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Notifications Type','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Notifications Type','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<select name="notifytype" style="width:269px;">
-									<option value="basic"<?php if($form->notifytype == 'basic') {echo " selected='selected'";} ?>><?php _e('Basic','formengine'); ?></option>
-									<option value="full"<?php if($form->notifytype == 'full') {echo " selected='selected'";} ?>><?php _e('Full','formengine'); ?></option>
+									<option value="basic"<?php if($form->notifytype == 'basic') {echo " selected='selected'";} ?>><?php _e('Basic','jumpforms'); ?></option>
+									<option value="full"<?php if($form->notifytype == 'full') {echo " selected='selected'";} ?>><?php _e('Full','jumpforms'); ?></option>
 								</select>
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Email Address','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Email Address','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<input name="email" class="tdmfw_input" type="text" style="width:269px;" value="<?php echo $form->email;?>">
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Email Subject','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Email Subject','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<input name="notifysubject" class="tdmfw_input" type="text" style="width:269px;" value="<?php echo $form->notifysubject;?>">
 							</td>
 							</tr>
 							<tr>
-							<td style="width:50%;"><?php _e('Email Message','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Email Message','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<input name="notifymessage" class="tdmfw_input" type="text" style="width:269px;" value="<?php echo $form->notifymessage;?>">
 							</td>
@@ -1789,7 +1780,7 @@ function formengine_form() {
 		</div>
 		
 				<div class="tdmfw_box">
-			<p class="tdmfw_box_title"><?php _e('Form Builder','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=7"><?php _e('Help?','formengine'); ?></a></p>
+			<p class="tdmfw_box_title"><?php _e('Form Builder','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=7"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 
 				<table class="tdmfw_table" style="margin-bottom:20px;">
@@ -1797,14 +1788,14 @@ function formengine_form() {
 			
 			
 							<tr>
-							<td style="width:50%;"><?php _e('Form Sections','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Form Sections','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<input type="text" style="width:269px;" class="tdmfw_input" name="sections" value="<?php echo $form->sections;?>" />
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Form Fields','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Form Fields','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<input type="text" style="width:269px;" class="tdmfw_input" name="fields" value="<?php echo $form->fields;?>" />
 							</td>
@@ -1813,21 +1804,21 @@ function formengine_form() {
 							<tr>
 							<td style="width:50%;background:transparent !important;"></td>
 							<td style="width:50%;background:transparent !important;">
-								<input class="button-secondary" type="submit" name="update_form" id="update_form" value="<?php _e('Save Changes','formengine'); ?>" />
+								<input class="button-secondary" type="submit" name="update_form" id="update_form" value="<?php _e('Save Changes','jumpforms'); ?>" />
 							</td>
 							</tr>
 														
 				</table>
 				
-				<table class="tdmfw_table table_white drag" id="formengine">
+				<table class="tdmfw_table table_white drag" id="jumpforms">
 							
 						<thead>
 						<tr valign="top">
 						<th>&nbsp;</th>
-						<th><?php _e('Label','formengine'); ?></th>
-						<th><?php _e('Type','formengine'); ?></th>
-						<th><?php _e('Value/Options','formengine'); ?></th>
-						<th style="text-align:center;"><?php _e('Required','formengine'); ?></th>
+						<th><?php _e('Label','jumpforms'); ?></th>
+						<th><?php _e('Type','jumpforms'); ?></th>
+						<th><?php _e('Value/Options','jumpforms'); ?></th>
+						<th style="text-align:center;"><?php _e('Required','jumpforms'); ?></th>
 						</tr>
 						</thead>
 						
@@ -1877,31 +1868,31 @@ function formengine_form() {
 								<td width="30%"><input class="tdmfw_input" name="<?php echo $label;?>" type="text" value="<?php echo $form->$label;?>"></td>
 								<td width="30%"><select style="width:100%;" name="<?php echo $type;?>">
 									<optgroup label="Section">
-										<option value="sectionstart"<?php if($form->$type == 'sectionstart') {echo " selected='selected'";} ?>><?php _e('Section Start','formengine'); ?></option>
-										<option value="sectionend"<?php if($form->$type == 'sectionend') {echo " selected='selected'";} ?>><?php _e('Section End','formengine'); ?></option>
+										<option value="sectionstart"<?php if($form->$type == 'sectionstart') {echo " selected='selected'";} ?>><?php _e('Section Start','jumpforms'); ?></option>
+										<option value="sectionend"<?php if($form->$type == 'sectionend') {echo " selected='selected'";} ?>><?php _e('Section End','jumpforms'); ?></option>
 									</optgroup>
 									<optgroup label="Custom">
-										<option value="input"<?php if($form->$type == 'input' || $form->$type == '') { echo " selected='selected'";} ?>><?php _e('Single Line Text','formengine'); ?></option>
-										<option value="textarea"<?php if($form->$type == 'textarea') {echo " selected='selected'";} ?>><?php _e('Paragraph Text','formengine'); ?></option>
-										<option value="email"<?php if($form->$type == 'email') { echo " selected='selected'";} ?>><?php _e('Email Address','formengine'); ?></option>
-										<option value="password"<?php if($form->$type == 'password') { echo " selected='selected'";} ?>><?php _e('Password','formengine'); ?></option>
-										<option value="date"<?php if($form->$type == 'date') {echo " selected='selected'";} ?>><?php _e('Date Picker','formengine'); ?></option>
-										<option value="time"<?php if($form->$type == 'time') {echo " selected='selected'";} ?>><?php _e('Time Picker','formengine'); ?></option>
-										<option value="checkbox"<?php if($form->$type == 'checkbox') {echo " selected='selected'";} ?>><?php _e('Checkboxes','formengine'); ?></option>
-										<option value="dropdown"<?php if($form->$type == 'dropdown') {echo " selected='selected'";} ?>><?php _e('Dropdown Menu','formengine'); ?></option>
-										<option value="radio"<?php if($form->$type == 'radio') {echo " selected='selected'";} ?>><?php _e('Multiple Choice','formengine'); ?></option>
-										<option value="inlineradio"<?php if($form->$type == 'inlineradio') {echo " selected='selected'";} ?>><?php _e('Inline Multiple Choice','formengine'); ?></option>
-										<option value="upload"<?php if($form->$type == 'upload') {echo " selected='selected'";} ?>><?php _e('File Upload','formengine'); ?></option>
-										<option value="divider"<?php if($form->$type == 'divider') {echo " selected='selected'";} ?>><?php _e('Text','formengine'); ?></option>
-										<option value="acceptance"<?php if($form->$type == 'acceptance') {echo " selected='selected'";} ?>><?php _e('Acceptance','formengine'); ?></option>
-										<option value="hidden"<?php if($form->$type == 'hidden') {echo " selected='selected'";} ?>><?php _e('Hidden','formengine'); ?></option>
+										<option value="input"<?php if($form->$type == 'input' || $form->$type == '') { echo " selected='selected'";} ?>><?php _e('Single Line Text','jumpforms'); ?></option>
+										<option value="textarea"<?php if($form->$type == 'textarea') {echo " selected='selected'";} ?>><?php _e('Paragraph Text','jumpforms'); ?></option>
+										<option value="email"<?php if($form->$type == 'email') { echo " selected='selected'";} ?>><?php _e('Email Address','jumpforms'); ?></option>
+										<option value="password"<?php if($form->$type == 'password') { echo " selected='selected'";} ?>><?php _e('Password','jumpforms'); ?></option>
+										<option value="date"<?php if($form->$type == 'date') {echo " selected='selected'";} ?>><?php _e('Date Picker','jumpforms'); ?></option>
+										<option value="time"<?php if($form->$type == 'time') {echo " selected='selected'";} ?>><?php _e('Time Picker','jumpforms'); ?></option>
+										<option value="checkbox"<?php if($form->$type == 'checkbox') {echo " selected='selected'";} ?>><?php _e('Checkboxes','jumpforms'); ?></option>
+										<option value="dropdown"<?php if($form->$type == 'dropdown') {echo " selected='selected'";} ?>><?php _e('Dropdown Menu','jumpforms'); ?></option>
+										<option value="radio"<?php if($form->$type == 'radio') {echo " selected='selected'";} ?>><?php _e('Multiple Choice','jumpforms'); ?></option>
+										<option value="inlineradio"<?php if($form->$type == 'inlineradio') {echo " selected='selected'";} ?>><?php _e('Inline Multiple Choice','jumpforms'); ?></option>
+										<option value="upload"<?php if($form->$type == 'upload') {echo " selected='selected'";} ?>><?php _e('File Upload','jumpforms'); ?></option>
+										<option value="divider"<?php if($form->$type == 'divider') {echo " selected='selected'";} ?>><?php _e('Text','jumpforms'); ?></option>
+										<option value="acceptance"<?php if($form->$type == 'acceptance') {echo " selected='selected'";} ?>><?php _e('Acceptance','jumpforms'); ?></option>
+										<option value="hidden"<?php if($form->$type == 'hidden') {echo " selected='selected'";} ?>><?php _e('Hidden','jumpforms'); ?></option>
 									</optgroup>
 									<optgroup label="Special">
-										<option value="country"<?php if($form->$type == 'country') {echo " selected='selected'";} ?>><?php _e('Countries','formengine'); ?></option>
-										<option value="county"<?php if($form->$type == 'county') {echo " selected='selected'";} ?>><?php _e('UK Counties','formengine'); ?></option>
-										<option value="state"<?php if($form->$type == 'state') {echo " selected='selected'";} ?>><?php _e('States - USA','formengine'); ?></option>
-										<option value="statecan"<?php if($form->$type == 'statecan') {echo " selected='selected'";} ?>><?php _e('States - Canada','formengine'); ?></option>
-										<option value="stateaus"<?php if($form->$type == 'stateaus') {echo " selected='selected'";} ?>><?php _e('States - Australia','formengine'); ?></option>
+										<option value="country"<?php if($form->$type == 'country') {echo " selected='selected'";} ?>><?php _e('Countries','jumpforms'); ?></option>
+										<option value="county"<?php if($form->$type == 'county') {echo " selected='selected'";} ?>><?php _e('UK Counties','jumpforms'); ?></option>
+										<option value="state"<?php if($form->$type == 'state') {echo " selected='selected'";} ?>><?php _e('States - USA','jumpforms'); ?></option>
+										<option value="statecan"<?php if($form->$type == 'statecan') {echo " selected='selected'";} ?>><?php _e('States - Canada','jumpforms'); ?></option>
+										<option value="stateaus"<?php if($form->$type == 'stateaus') {echo " selected='selected'";} ?>><?php _e('States - Australia','jumpforms'); ?></option>
 									</optgroup>
 								</select></td>
 								<td width="30%"><input class="tdmfw_input" name="<?php echo $value;?>" type="text" value="<?php echo $form->$value;?>"></td>
@@ -1921,7 +1912,7 @@ function formengine_form() {
 		</div>	
 		
 		<div class="tdmfw_box">
-			<p class="tdmfw_box_title"><?php _e('Responses','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=8"><?php _e('Help?','formengine'); ?></a></p>
+			<p class="tdmfw_box_title"><?php _e('Responses','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=8"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 
 <?php if($rows > 0) { ?>
@@ -1930,8 +1921,8 @@ function formengine_form() {
 		
 		<thead>
 		<tr valign="top">
-		<th><?php _e('Date/Time','formengine'); ?></th>
-		<th><?php _e('Action','formengine'); ?></th>
+		<th><?php _e('Date/Time','jumpforms'); ?></th>
+		<th><?php _e('Action','jumpforms'); ?></th>
 		</tr>
 		</thead>
 		<tbody>	
@@ -1942,8 +1933,8 @@ function formengine_form() {
 	foreach ($rows as $row) { ?>
 	
 	<tr valign="top">
-		<td width="93%"><a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=formengine_response&amp;fid=<?php echo $row->fid;?>&amp;id=<?php echo $row->id;?>"><?php echo date("j F Y", strtotime($row->date)); ?> at <?php echo date("H:iA", strtotime($row->date)); ?></a></td>
-		<td width="7%"><a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=formengine_form&amp;fid=<?php echo $row->fid;?>&amp;delete_response=<?php echo $row->id;?>" onclick="return confirm('<?php _e('Are you sure you want to delete this response?','formengine'); ?>')">Delete</a></td>
+		<td width="93%"><a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=jumpforms_response&amp;fid=<?php echo $row->fid;?>&amp;id=<?php echo $row->id;?>"><?php echo date("j F Y", strtotime($row->date)); ?> at <?php echo date("H:iA", strtotime($row->date)); ?></a></td>
+		<td width="7%"><a href="<?php echo $_SERVER['PHP_SELF'] ?>?page=jumpforms_form&amp;fid=<?php echo $row->fid;?>&amp;delete_response=<?php echo $row->id;?>" onclick="return confirm('<?php _e('Are you sure you want to delete this response?','jumpforms'); ?>')">Delete</a></td>
 	</tr>
 	
 	<?php } ?>
@@ -1951,7 +1942,7 @@ function formengine_form() {
 		</tbody>
 		</table>
 		
-	<?php } else { _e('You do not have any responses for this form.','formengine');}
+	<?php } else { _e('You do not have any responses for this form.','jumpforms');}
 
 ?>
 
@@ -1959,15 +1950,15 @@ function formengine_form() {
 		</div>
 		
 		<div class="tdmfw_box" style="margin-bottom:20px;">
-			<p class="tdmfw_box_title"><?php _e('Import/Export','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=9"><?php _e('Help?','formengine'); ?></a></p>
+			<p class="tdmfw_box_title"><?php _e('Import/Export','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=9"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 			
 				<table class="tdmfw_table"> 
 					<tbody>
-						<tr><td><?php echo "<a href='?page=formengine_import&amp;fid=".$form->id."'>";?><?php _e('Import data into','formengine'); ?> <?php echo $form->title;?></a></td></tr>
-						<tr><td><?php echo "<a href='?page=formengine_export&amp;fid=".$form->id."'>";?><?php _e('Export','formengine'); ?> <?php echo $form->title;?></a></td></tr>
-						<tr><td><a href="<?php echo plugins_url('assets/export/csv.php',__FILE__ );?>?fid=<?php echo $form->id;?>"><?php _e('Export','formengine'); ?> <?php echo $form->title;?> <?php _e('data to .CSV','formengine'); ?></a></td></tr>
-						<tr><td><a href="<?php echo plugins_url('assets/export/txt.php',__FILE__ );?>?fid=<?php echo $form->id;?>"><?php _e('Export','formengine'); ?> <?php echo $form->title;?> <?php _e('data to .TXT','formengine'); ?></a></td></tr>
+						<tr><td><?php echo "<a href='?page=jumpforms_import&amp;fid=".$form->id."'>";?><?php _e('Import data into','jumpforms'); ?> <?php echo $form->title;?></a></td></tr>
+						<tr><td><?php echo "<a href='?page=jumpforms_export&amp;fid=".$form->id."'>";?><?php _e('Export','jumpforms'); ?> <?php echo $form->title;?></a></td></tr>
+						<tr><td><a href="<?php echo plugins_url('assets/export/csv.php',__FILE__ );?>?fid=<?php echo $form->id;?>"><?php _e('Export','jumpforms'); ?> <?php echo $form->title;?> <?php _e('data to .CSV','jumpforms'); ?></a></td></tr>
+						<tr><td><a href="<?php echo plugins_url('assets/export/txt.php',__FILE__ );?>?fid=<?php echo $form->id;?>"><?php _e('Export','jumpforms'); ?> <?php echo $form->title;?> <?php _e('data to .TXT','jumpforms'); ?></a></td></tr>
 					</tbody>
 				</table>
 			
@@ -1976,23 +1967,23 @@ function formengine_form() {
 		
 		<div style="clear:both;"></div>
 
-				<input class="button-primary" type="submit" name="update_form" id="update_form" value="<?php _e('Save Changes','formengine'); ?>" />
-				<input class="button-secondary" type="submit" name="create_form_page" id="create_form_page" value="<?php _e('Create Form Page','formengine'); ?>" />
-				<a class="button-secondary" href="?page=formengine_custom_css"><?php _e('Manage Custom CSS','formengine'); ?></a>
-				<a class="button-secondary" href="?page=formengine_dashboard"><?php _e('Go Back','formengine'); ?></a>
+				<input class="button-primary" type="submit" name="update_form" id="update_form" value="<?php _e('Save Changes','jumpforms'); ?>" />
+				<input class="button-secondary" type="submit" name="create_form_page" id="create_form_page" value="<?php _e('Create Form Page','jumpforms'); ?>" />
+				<a class="button-secondary" href="?page=jumpforms_custom_css"><?php _e('Manage Custom CSS','jumpforms'); ?></a>
+				<a class="button-secondary" href="?page=jumpforms_dashboard"><?php _e('Go Back','jumpforms'); ?></a>
 				
 	</form>
 	</div>
 
 <?php }
 
-function formengine_response() {
+function jumpforms_response() {
 	global $wpdb;
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	if(isset($_GET['fid'])) { $fid = $_GET['fid']; }
 	if(isset($_GET['id'])) { $id = $_GET['id']; }
-	$table = $wpdb->prefix . "formengine";
-	$table2 = $wpdb->prefix . "formengine_data";
+	$table = $wpdb->prefix . "jumpforms";
+	$table2 = $wpdb->prefix . "jumpforms_data";
 	$forms = $wpdb->get_results("SELECT * FROM $table");
 	$structure = $wpdb->get_row("SELECT * FROM $table WHERE id = '$fid'");
 	$row = $wpdb->get_row("SELECT * FROM $table2 WHERE fid = '$fid'");
@@ -2000,30 +1991,30 @@ function formengine_response() {
 ?>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><?php echo '<a href="?page=formengine_form&fid='.$structure->id.'#start">'.$structure->title.'</a>';?></li>
-	    <li><a class="current"><?php _e('Response','formengine'); ?> <?php echo '#'. $_GET['id'];?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><?php echo '<a href="?page=jumpforms_form&fid='.$structure->id.'#start">'.$structure->title.'</a>';?></li>
+	    <li><a class="current"><?php _e('Response','jumpforms'); ?> <?php echo '#'. $_GET['id'];?></a></li>
 	</ul>
 
 	<div id="tdmfw_content">	
 	
 		<div class="tdmfw_box" style="margin-top:0;margin-bottom:20px;">
-			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Form Details','formengine'); ?></p>
+			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Form Details','jumpforms'); ?></p>
 			<div class="tdmfw_box_content">
 
 				<table class="tdmfw_table">
 
 							<tr>
-							<td style="width:50%;"><?php _e('Form','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Form','jumpforms'); ?></td>
 							<td style="width:50%;">
-								<?php echo '<a href="?page=formengine_form&fid='.$structure->id.'#start">'.$structure->title.'</a>';?>
+								<?php echo '<a href="?page=jumpforms_form&fid='.$structure->id.'#start">'.$structure->title.'</a>';?>
 							</td>
 							</tr>
 							
 							<tr>
-							<td style="width:50%;"><?php _e('Date/Time','formengine'); ?></td>
+							<td style="width:50%;"><?php _e('Date/Time','jumpforms'); ?></td>
 							<td style="width:50%;">
 								<?php echo date("j F Y", strtotime($row->date)); ?>  at <?php echo date("H:iA", strtotime($row->date)); ?>
 							</td>
@@ -2035,7 +2026,7 @@ function formengine_response() {
 		</div>
 	
 		<div class="tdmfw_box" style="margin-top:0;margin-bottom:20px;">
-			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Response Details','formengine'); ?></p>
+			<p class="tdmfw_box_title" style="margin-top:0;"><?php _e('Response Details','jumpforms'); ?></p>
 			<div class="tdmfw_box_content">
 			
 				<table class="tdmfw_table">
@@ -2071,33 +2062,33 @@ function formengine_response() {
 		</div>
 	<div id="content">
 
-<a class="button-secondary" href="?page=formengine_form&fid=<?php echo $structure->id;?>"><?php _e('Go Back','formengine'); ?></a>
+<a class="button-secondary" href="?page=jumpforms_form&fid=<?php echo $structure->id;?>"><?php _e('Go Back','jumpforms'); ?></a>
 
 	</div>
 	</div>
 
 <?php }
 
-function formengine_display($atts, $content = null) {	
+function jumpforms_display($atts, $content = null) {	
 	if(isset($id)) { } else { $id = ''; } 
 	extract(shortcode_atts(array(
 		"id" => $id
 	), $atts));
 	ob_start();	
-	formengine_show_form($id);
+	jumpforms_show_form($id);
 	$output_string = ob_get_contents();
 	ob_end_clean();
 	return $output_string;
 }
 
-function formengine_display_modal($atts, $content = null) {
+function jumpforms_display_modal($atts, $content = null) {
 	if(isset($id)) { } else { $id = ''; } 
 	extract(shortcode_atts(array(
 		"id" => $id
 	), $atts));
 
 	global $wpdb;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$row = $wpdb->get_row("SELECT * FROM $table WHERE id = $id");
 	echo "<a class='btn' data-toggle='modal' href='#pop' >".$row->modalbutton."</a>"; ?>
 	
@@ -2107,7 +2098,7 @@ function formengine_display_modal($atts, $content = null) {
 		<?php 
 		
 		ob_start();	
-		formengine_show_form($id);
+		jumpforms_show_form($id);
 		$output_string = ob_get_contents();
 		ob_end_clean();
 		return $output_string;
@@ -2121,19 +2112,19 @@ function formengine_display_modal($atts, $content = null) {
 
 }
 
-function formengine_show_form($fid) { 
+function jumpforms_show_form($fid) { 
 
 	if(wp_script_is('jquery')) { } else { wp_enqueue_script('jquery'); }
-	wp_register_script('formengine', plugins_url('/assets/js/frontend/formengine.js',__FILE__ )); wp_enqueue_script('formengine');
+	wp_register_script('jumpforms', plugins_url('/assets/js/frontend/jumpforms.js',__FILE__ )); wp_enqueue_script('jumpforms');
 	wp_register_script('bootstrap', plugins_url('/assets/js/frontend/bootstrap.js',__FILE__ )); wp_enqueue_script('bootstrap');
 	wp_register_script('datepicker', plugins_url('/assets/js/frontend/datepicker.js',__FILE__ )); wp_enqueue_script('datepicker');
 	wp_register_script('timepicker', plugins_url('/assets/js/frontend/timepicker.js',__FILE__ )); wp_enqueue_script('timepicker');
 	wp_register_script('validation', plugins_url('/assets/js/frontend/validation.js',__FILE__ )); wp_enqueue_script('validation');
 	wp_register_style('bootstrap', plugins_url('/assets/css/bootstrap.css',__FILE__ )); wp_enqueue_style('bootstrap');
-	wp_register_style('formengine', plugins_url('/assets/css/formengine.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/jumpforms.css',__FILE__ )); wp_enqueue_style('jumpforms');
 
 	global $wpdb;
-	$table = $wpdb->prefix . "formengine";
+	$table = $wpdb->prefix . "jumpforms";
 	$fields = $wpdb->get_var("SELECT fields FROM $table WHERE id = $fid");
 	$row = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
 	$sectioncount = $row->sections;
@@ -2151,7 +2142,7 @@ function formengine_show_form($fid) {
 	
 ?>
 
-	<div id="formengine" class="formengine_form_<?php echo $fid;?>">
+	<div id="jumpforms" class="jumpforms_form_<?php echo $fid;?>">
 	<ul id="myTab" class="nav nav-tabs span8">
 		<?php
 			global $wpdb;
@@ -2162,7 +2153,7 @@ function formengine_show_form($fid) {
 	</ul>
 
 
-	<form id="formengine" action="<?php echo plugins_url('/assets/includes/process.php',__FILE__ );?>" method="POST" style="margin-bottom:0;" enctype="multipart/form-data">
+	<form id="jumpforms" action="<?php echo plugins_url('/assets/includes/process.php',__FILE__ );?>" method="POST" style="margin-bottom:0;" enctype="multipart/form-data">
 		<div id="myTabContent" class="tab-content">	
 	
 	<?php
@@ -2761,7 +2752,7 @@ function formengine_show_form($fid) {
 	
 		<?php if($row->captcha == "on") { ?>
 			<div class="captcha" style="display:none;">
-			<label><?php _e('Security Code','formengine'); ?>: <span style='color:red;'>&#042;</span></label><br/>
+			<label><?php _e('Security Code','jumpforms'); ?>: <span style='color:red;'>&#042;</span></label><br/>
 			<img src="<?php echo plugins_url('/assets/includes/captcha.php',__FILE__ ); ?>" alt="" /><br/>
 			<fieldset><input id="security_code" class="validate[required]" name="security_code" type="text" /></fieldset>
 			</div>
@@ -2770,8 +2761,8 @@ function formengine_show_form($fid) {
 		<input type="hidden" class="text" name="fid" value="<?php echo $fid;?>" />
 		
 		<div class="form-actions" style="margin-top:15px;">
-		<a class="btnPrev btn" style="display:none;float:left;margin-right:10px;"><?php _e('Back','formengine'); ?></a>
-		<a class="btnNext btn" style="float:left;margin-right:10px;"><?php _e('Next','formengine'); ?></a>
+		<a class="btnPrev btn" style="display:none;float:left;margin-right:10px;"><?php _e('Back','jumpforms'); ?></a>
+		<a class="btnNext btn" style="float:left;margin-right:10px;"><?php _e('Next','jumpforms'); ?></a>
 		</div>
 	
 	</form>
@@ -2781,28 +2772,28 @@ function formengine_show_form($fid) {
 
 }
 
-function formengine_custom_css() {
-	$formengine_customcss = get_option('formengine_custom_css');
-	if (!empty($formengine_customcss)) {
-		echo "\n<!-- JumpForms Custom CSS Start -->\n<style type=\"text/css\">\n".$formengine_customcss."\n</style>\n<!-- JumpForms Custom CSS End -->\n\n";
+function jumpforms_custom_css() {
+	$jumpforms_customcss = get_option('jumpforms_custom_css');
+	if (!empty($jumpforms_customcss)) {
+		echo "\n<!-- JumpForms Custom CSS Start -->\n<style type=\"text/css\">\n".$jumpforms_customcss."\n</style>\n<!-- JumpForms Custom CSS End -->\n\n";
 	}
 }
 
-function formengine_css_admin() {
-	add_action( 'admin_init', 'register_settings_formengine_css' );
+function jumpforms_css_admin() {
+	add_action( 'admin_init', 'register_settings_jumpforms_css' );
 }
 
 // register settings
-function register_settings_formengine_css(){
-	register_setting('formengine_mccss_settings','formengine_custom_css');
+function register_settings_jumpforms_css(){
+	register_setting('jumpforms_mccss_settings','jumpforms_custom_css');
 }
-function formengine_custom_css_options() {
+function jumpforms_custom_css_options() {
 	global $wpdb;
 	global $error;
 	global $success;
 	global $info;
 	if(wp_script_is('jquery')) { } else { wp_enqueue_script('jquery'); }
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 ?>
 
 <link type="text/css" rel="stylesheet" href="<?php echo WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)); ?>/assets/css/syntax/codemirror.css"></link>
@@ -2811,13 +2802,13 @@ function formengine_custom_css_options() {
 <script language="javascript" src="<?php echo WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)); ?>/assets/css/syntax/css.js"></script>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 	<ul id="tdmfw_crumbs">
-	    <li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	    <li><a class="current"><?php _e('Custom CSS','formengine'); ?></a></li>
+	    <li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	    <li><a class="current"><?php _e('Custom CSS','jumpforms'); ?></a></li>
 	</ul>
 	
-	<?php if(isset($_GET['settings-updated'])) { $success = __('Success! Custom CSS saved!','formengine'); } ?>
+	<?php if(isset($_GET['settings-updated'])) { $success = __('Success! Custom CSS saved!','jumpforms'); } ?>
 	
 	<?php if(isset($error)) { echo '<div class="tdmfw_error">'.$error.'</div>'; } ?>
 	<?php if(isset($success)) { echo '<div class="tdmfw_success">'.$success.'</div>'; } ?>
@@ -2825,17 +2816,17 @@ function formengine_custom_css_options() {
 	<div id="tdmfw_content">
 
 		<div class="tdmfw_box">
-			<?php _e('Customise the design of your JumpForms forms without ever having to touch the underlying code.','formengine'); ?>
-			<p class="tdmfw_box_title"><?php _e('Custom CSS','formengine'); ?><a style="float:right;" href="?page=formengine_documentation&did=11"><?php _e('Help?','formengine'); ?></a></p>
+			<?php _e('Customise the design of your JumpForms forms without ever having to touch the underlying code.','jumpforms'); ?>
+			<p class="tdmfw_box_title"><?php _e('Custom CSS','jumpforms'); ?><a style="float:right;" href="?page=jumpforms_documentation&did=11"><?php _e('Help?','jumpforms'); ?></a></p>
 			<div class="tdmfw_box_content">
 
 	<form method="post" action="options.php">
-	<?php settings_fields( 'formengine_mccss_settings' ); ?>
-	<textarea name="formengine_custom_css" id="formengine_custom_css" dir="ltr" style="width:100%;height:250px;" class="css"><?php echo get_option('formengine_custom_css');?></textarea>
-	<script language="javascript">var editor = CodeMirror.fromTextArea(document.getElementById("formengine_custom_css"), { lineNumbers: true });</script>
+	<?php settings_fields( 'jumpforms_mccss_settings' ); ?>
+	<textarea name="jumpforms_custom_css" id="jumpforms_custom_css" dir="ltr" style="width:100%;height:250px;" class="css"><?php echo get_option('jumpforms_custom_css');?></textarea>
+	<script language="javascript">var editor = CodeMirror.fromTextArea(document.getElementById("jumpforms_custom_css"), { lineNumbers: true });</script>
 
-    	<input type="submit" style="margin-top:20px;" class="button-primary" value="<?php _e('Save Changes','formengine'); ?>" />
-		<a class="button-secondary" href="?page=formengine_dashboard"><?php _e('Go Back','formengine'); ?></a>
+    	<input type="submit" style="margin-top:20px;" class="button-primary" value="<?php _e('Save Changes','jumpforms'); ?>" />
+		<a class="button-secondary" href="?page=jumpforms_dashboard"><?php _e('Go Back','jumpforms'); ?></a>
 
 	</form>
 
@@ -2847,54 +2838,54 @@ function formengine_custom_css_options() {
 <?php 
 }
 
-add_action('admin_menu', 'formengine_css_admin');
-add_action('wp_head', 'formengine_custom_css');
+add_action('admin_menu', 'jumpforms_css_admin');
+add_action('wp_head', 'jumpforms_custom_css');
 
-function formengine_documentation() {
-	initformenginepleClient();
+function jumpforms_documentation() {
+	initjumpformspleClient();
 	global $pleClient;
 	$activation_form = $pleClient->preCheckLicense();
 	if($activation_form) 
 		return;
 
-		wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+		wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 		require('assets/includes/documentation.php');
 	
 }
 
-function formengine_extensions() {
-	initformenginepleClient();
+function jumpforms_extensions() {
+	initjumpformspleClient();
 	global $pleClient;
 	$activation_form= $pleClient->preCheckLicense();
 	if($activation_form) 
 		return;
 
-		wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+		wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 		require('assets/includes/extensions.php');
 	
 }
 
 
-function formengine_infusionsoft() {
-	initformenginepleClient();
+function jumpforms_infusionsoft() {
+	initjumpformspleClient();
 	global $pleClient;
 	$activation_form= $pleClient->preCheckLicense();
 	if($activation_form) 
 		return;
 	/****************************************************/
 	wp_register_script('ajax', plugins_url('/assets/js/backend/ajax.js',__FILE__ )); wp_enqueue_script('ajax');
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	require('assets/includes/infusionsoft.php');
 	
 } 
 
-function formengine_aweber() {
-	initformenginepleClient();
+function jumpforms_aweber() {
+	initjumpformspleClient();
 	global $pleClient;
 	$activation_form= $pleClient->preCheckLicense();
 	if($activation_form) 
 		return;
-	wp_register_style('formengine', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('formengine');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
 	require('assets/includes/aweber.php');
 	
 }

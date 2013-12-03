@@ -2,8 +2,8 @@
 global $wpdb;
 error_reporting(1);
 
-$table = $wpdb->prefix . "formengine";	
-$table_webinar = $wpdb->prefix . "formengine_webinar_data"; 
+$table = $wpdb->prefix . "jumpforms";	
+$table_webinar = $wpdb->prefix . "jumpforms_webinar_data"; 
 $flag = 2;
 if(isset($_POST['submit'])) {
 	$citrix = new CitrixAPI();
@@ -17,14 +17,14 @@ if(isset($_POST['submit'])) {
 				"access_token" => $response->access_token,
 				"org_key" => $response->organizer_key );
 	if($response->access_token) {
-		$result = $wpdb->query("SELECT id FROM ".$wpdb->prefix. "formengine_webinar WHERE email='$_POST[email]'");
+		$result = $wpdb->query("SELECT id FROM ".$wpdb->prefix. "jumpforms_webinar WHERE email='$_POST[email]'");
 		
 		if($wpdb->num_rows == 0) {	
-			$wpdb->insert($wpdb->prefix. "formengine_webinar", 
+			$wpdb->insert($wpdb->prefix. "jumpforms_webinar", 
 					$data);
 		}
 		else {
-			$wpdb->update($wpdb->prefix. "formengine_webinar", $data, 
+			$wpdb->update($wpdb->prefix. "jumpforms_webinar", $data, 
 						array("email" => $_POST['email']));
 		}
 		$flag = 1;
@@ -42,7 +42,7 @@ if($flag == 1) {
 elseif($flag == 0) {
 	echo "<div class='updated'>An error occured, please check the login credentials</div>";
 }
-$result = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix ."formengine_webinar");	
+$result = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix ."jumpforms_webinar");	
 
 if(isset($_POST['inf_save'])) {
 	$result1 = $wpdb->get_results("SELECT * FROM $table");
@@ -51,7 +51,7 @@ if(isset($_POST['inf_save'])) {
 	}
 	if($_POST['addinf'])
 		foreach($_POST['addinf'] as $a) {
-			$wpdb->update($wpdb->prefix."formengine", array("webinar" => '1'), array("id" => $a));
+			$wpdb->update($wpdb->prefix."jumpforms", array("webinar" => '1'), array("id" => $a));
 			$i = $wpdb->get_var("SELECT id FROM $table_webinar WHERE id=$a");
 			if(!$i) {
 	 			$wpdb->query("INSERT INTO $table_webinar(formid) VALUES('$a')");
@@ -77,19 +77,19 @@ if(isset($_POST['save_feed'])) {
 ?>
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 		<ul id="tdmfw_crumbs">
-			<li><a href="?page=formengine_dashboard">JumpForms</a></li>
-			<li><a class="current"><?php _e('Webinar','formengine'); ?></a></li>
+			<li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+			<li><a class="current"><?php _e('Webinar','jumpforms'); ?></a></li>
 			
 		</ul>
 				
 		<div id="tdmfw_content">
 			<div class="tdmfw_box" style="margin-top:0;">
 			<p class="tdmfw_box_title" style="margin-top:0;">
-				<a id="settings"> <?php _e('Webinar Settings ','formengine');?></a>|
-				<a id="feeds"><?php _e('Webinar Feeds','formengine'); ?></a>
-				<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>	
+				<a id="settings"> <?php _e('Webinar Settings ','jumpforms');?></a>|
+				<a id="feeds"><?php _e('Webinar Feeds','jumpforms'); ?></a>
+				<a id="addinf" style="float: right;"><?php _e('Add Form','jumpforms'); ?></a>	
 			</p>
 			<?php
 			$webinarForms = $wpdb->get_results("SELECT id,title FROM $table");

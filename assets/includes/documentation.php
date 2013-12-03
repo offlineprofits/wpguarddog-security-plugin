@@ -1,8 +1,8 @@
 <div id="tdmfw">
-<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 <ul id="tdmfw_crumbs">
-	<li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	<li><a class="current"><?php _e('Documentation','formengine'); ?></a></li>
+	<li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	<li><a class="current"><?php _e('Documentation','jumpforms'); ?></a></li>
 </ul>
 		
 <div id="tdmfw_content">
@@ -14,18 +14,18 @@
 
 <?php
 	// SET TITLE
-	if($did == '1') { _e('Documentation','formengine'); }
-	elseif($did == '2') { _e('Getting Started','formengine'); }
-	elseif($did == '3') { _e('The Dashboard','formengine'); }
-	elseif($did == '4') { _e('Create New Form','formengine'); }
-	elseif($did == '5') { _e('Form Configuration','formengine'); }
-	elseif($did == '6') { _e('Notifications','formengine'); }
-	elseif($did == '7') { _e('The Form Builder','formengine'); }
-	elseif($did == '8') { _e('Responses','formengine'); }
-	elseif($did == '9') { _e('Import/Export','formengine'); }
-	elseif($did == '10') { _e('Statistics','formengine'); }
-	elseif($did == '11') { _e('Custom CSS','formengine'); }
-	elseif($did == '12') { _e('Further Support','formengine'); }
+	if($did == '1') { _e('Documentation','jumpforms'); }
+	elseif($did == '2') { _e('Getting Started','jumpforms'); }
+	elseif($did == '3') { _e('The Dashboard','jumpforms'); }
+	elseif($did == '4') { _e('Create New Form','jumpforms'); }
+	elseif($did == '5') { _e('Form Configuration','jumpforms'); }
+	elseif($did == '6') { _e('Notifications','jumpforms'); }
+	elseif($did == '7') { _e('The Form Builder','jumpforms'); }
+	elseif($did == '8') { _e('Responses','jumpforms'); }
+	elseif($did == '9') { _e('Import/Export','jumpforms'); }
+	elseif($did == '10') { _e('Statistics','jumpforms'); }
+	elseif($did == '11') { _e('Custom CSS','jumpforms'); }
+	elseif($did == '12') { _e('Further Support','jumpforms'); }
 ?>
 
 <div class="tdmfw_box_content">			
@@ -37,22 +37,22 @@
 		<table class="tdmfw_table"> 
 			<thead>
 				<tr valign="top">
-					<th><?php _e('Topic','formengine'); ?></th>
+					<th><?php _e('Topic','jumpforms'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 			
-			<tr><td><a href="?page=formengine_documentation&did=2"><?php _e('Getting Started','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=3"><?php _e('The Dashboard','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=4"><?php _e('Create New Form','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=5"><?php _e('Form Configuration','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=6"><?php _e('Notifications','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=7"><?php _e('The Form Builder','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=8"><?php _e('Responses','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=9"><?php _e('Import/Export','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=10"><?php _e('Statistics','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=11"><?php _e('Custom CSS','formengine'); ?></a></td></tr>
-			<tr><td><a href="?page=formengine_documentation&did=12"><?php _e('Further Support','formengine'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=2"><?php _e('Getting Started','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=3"><?php _e('The Dashboard','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=4"><?php _e('Create New Form','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=5"><?php _e('Form Configuration','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=6"><?php _e('Notifications','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=7"><?php _e('The Form Builder','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=8"><?php _e('Responses','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=9"><?php _e('Import/Export','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=10"><?php _e('Statistics','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=11"><?php _e('Custom CSS','jumpforms'); ?></a></td></tr>
+			<tr><td><a href="?page=jumpforms_documentation&did=12"><?php _e('Further Support','jumpforms'); ?></a></td></tr>
 
 			</tbody>
 		</table>
@@ -99,8 +99,8 @@
 		&bull; CAPTCHA &dash; Choose whether or not to display a CAPTCHA field at the end of your form<br/>
 		&bull; Modal Text &dash; Enter the text you would like to display on the popup form button<br/><br/>
 		To quickly create a page and embed your form in it, click the 'Create Form Page' button at the bottom of the page<br/><br/>
-		To embed your form manually, create a new page and enter the following short [formengine id=X] where X is the ID number of your form<br/><br/>
-		To embed a popup form, create a new page and enter the following short [formengine_modal id=X] where X is the ID number of your form
+		To embed your form manually, create a new page and enter the following short [jumpforms id=X] where X is the ID number of your form<br/><br/>
+		To embed a popup form, create a new page and enter the following short [jumpforms_modal id=X] where X is the ID number of your form
 	<?php } ?>
 	
 	
@@ -208,24 +208,24 @@
 	You can customise the look and feel of your JumpForms forms without ever having to touch the underlying code.<br/><br/>
 	
 	<strong>How to target all forms</strong><br/><br/>
-	If you want to write a CSS rule that will target all of your forms, make sure you prefix each CSS rule with #formengine.<br/><br/>
+	If you want to write a CSS rule that will target all of your forms, make sure you prefix each CSS rule with #jumpforms.<br/><br/>
 	
 	Example:<br/><br/>
 	
 	<span style="font-family:courier">
-	&#35;formengine &#123;<br/>
+	&#35;jumpforms &#123;<br/>
 	&nbsp;&nbsp;&nbsp;background-color:&#35;EEE;<br/>
 	&#125;<br/><br/>
 	</span>
 	
 	<strong>How to target a specific form</strong><br/><br/>
 	
-	If you want to write a CSS rule that will affect only one form, make sure you prefix each CSS rule with #formengine.formengine_form_ID where ID is the ID number of the form.<br/><br/>
+	If you want to write a CSS rule that will affect only one form, make sure you prefix each CSS rule with #jumpforms.jumpforms_form_ID where ID is the ID number of the form.<br/><br/>
 
 	Example:<br/><br/>
 	
 	<span style="font-family:courier">
-	&#35;formengine.formengine_form_1 label &#123;<br/>
+	&#35;jumpforms.jumpforms_form_1 label &#123;<br/>
 	&nbsp;&nbsp;&nbsp;font-weight:bold;<br/>
 	&#125;
 	</span>
@@ -238,7 +238,7 @@
 	JumpForms is in active development and will continue to receive regular updates. If you have any questions, suggestions or complaints please do not hesitate to <a href="http://www.wpfrogs.com">get in touch</a>.<br/><br/>
 	We are also available for additional work &mdash; so if you would like a custom add-on, extension or modification to JumpForms then please <a href="http://www.wpfrogs.com">get in touch</a> and we'll be happy to discuss this with you.<br/><br/>
 	Thank you for using JumpForms.<br/><br/>
-	Best regards &mdash; 2DMonkey
+	Best regards &mdash; wpfrogs
 	<?php } ?>
 	
 	
@@ -246,8 +246,8 @@
 </div>
 </div>
 
-<?php if($did-1 > 0) { ?><a style="float:left;margin-top:20px;" class="button-secondary" href="?page=formengine_documentation&did=<?php echo $did-1?>"><?php _e('Previous Topic','formengine'); ?></a> <?php } ?>
-<?php if($did+1 <= $docsmax) { ?><a style="float:right;margin-top:20px;" class="button-secondary" href="?page=formengine_documentation&did=<?php echo $did+1;?>"><?php _e('Next Topic','formengine'); ?></a> <?php } ?>
+<?php if($did-1 > 0) { ?><a style="float:left;margin-top:20px;" class="button-secondary" href="?page=jumpforms_documentation&did=<?php echo $did-1?>"><?php _e('Previous Topic','jumpforms'); ?></a> <?php } ?>
+<?php if($did+1 <= $docsmax) { ?><a style="float:right;margin-top:20px;" class="button-secondary" href="?page=jumpforms_documentation&did=<?php echo $did+1;?>"><?php _e('Next Topic','jumpforms'); ?></a> <?php } ?>
 
 </div>
 </div>

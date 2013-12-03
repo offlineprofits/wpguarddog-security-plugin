@@ -1,8 +1,8 @@
 <div id="tdmfw">
-<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 <ul id="tdmfw_crumbs">
-	<li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	<li><a class="current"><?php _e('Extensions','formengine'); ?></a></li>
+	<li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	<li><a class="current"><?php _e('Extensions','jumpforms'); ?></a></li>
 </ul>
 		
 <div id="tdmfw_content">
@@ -14,23 +14,23 @@
 			
 			<!--<thead>
 				<tr valign="top">
-					<th style="width:50%;"><?php _e('Extension','formengine'); ?></th>
-					<th style="width:50%;"><?php _e('Status','formengine'); ?></th>
+					<th style="width:50%;"><?php _e('Extension','jumpforms'); ?></th>
+					<th style="width:50%;"><?php _e('Status','jumpforms'); ?></th>
 				</tr>
 			</thead>-->
 			
 			<tbody>
 			
 				<!--<tr>
-					<td><?php if(is_plugin_active('formengine_paypal/index.php')) { echo '<a href="?page=formengine_paypal">'; _e('PayPal','formengine'); echo '</a>' ; } else { _e('PayPal','formengine'); } ?></td>
+					<td><?php if(is_plugin_active('jumpforms_paypal/index.php')) { echo '<a href="?page=jumpforms_paypal">'; _e('PayPal','jumpforms'); echo '</a>' ; } else { _e('PayPal','jumpforms'); } ?></td>
 					<td>
-					<?php if(file_exists('../wp-content/plugins/formengine_paypal/index.php')) {
-						if(is_plugin_active('formengine_paypal/index.php')) { _e('Enabled','formengine'); } else { _e('Disabled','formengine'); }
-					} else { _e('Not Installed','formengine'); } ?>
+					<?php if(file_exists('../wp-content/plugins/jumpforms_paypal/index.php')) {
+						if(is_plugin_active('jumpforms_paypal/index.php')) { _e('Enabled','jumpforms'); } else { _e('Disabled','jumpforms'); }
+					} else { _e('Not Installed','jumpforms'); } ?>
 					</td>
 				</tr>-->
 				<tr>
-					<td colspan="2"><?php _e('There are no extensions available yet.','formengine');?></td>
+					<td colspan="2"><?php _e('There are no extensions available yet.','jumpforms');?></td>
 				</tr>
 			
 			</tbody>

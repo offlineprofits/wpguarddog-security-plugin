@@ -6,8 +6,8 @@ $infusion = new iSDK();
 $infusion->cfgCon("connectionName");
 $webForm = $infusion->getWebFormMap();
 global $wpdb;
-$table = $wpdb->prefix . "formengine";	
-$table_infusionsoft = $wpdb->prefix . "formengine_infusion"; 
+$table = $wpdb->prefix . "jumpforms";	
+$table_infusionsoft = $wpdb->prefix . "jumpforms_infusion"; 
 if(isset($_POST['inf_save'])) {
 	$result = $wpdb->get_results("SELECT * FROM $table");
 	foreach ($result as $res) {
@@ -15,7 +15,7 @@ if(isset($_POST['inf_save'])) {
 	}
 	if($_POST['addinf'])
 	foreach($_POST['addinf'] as $a) {
-		$wpdb->update($wpdb->prefix."formengine", array("infusion" => 1), array("id" => $a));
+		$wpdb->update($wpdb->prefix."jumpforms", array("infusion" => 1), array("id" => $a));
 		$i = $wpdb->get_var("SELECT id FROM $table_infusionsoft WHERE id=$a");
 		if(!$i) {
  			$wpdb->query("INSERT INTO $table_infusionsoft(formid) VALUES('$a')");
@@ -47,28 +47,28 @@ if(isset($_POST['save_feed'])) {
 
 
 <div id="tdmfw">
-<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 <ul id="tdmfw_crumbs">
-	<li><a href="?page=formengine_dashboard">JumpForms</a></li>
-	<li><a class="current"><?php _e('Infusionsoft','formengine'); ?></a></li>
+	<li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+	<li><a class="current"><?php _e('Infusionsoft','jumpforms'); ?></a></li>
 	
 </ul>
 		
 <div id="tdmfw_content">
 <div class="tdmfw_box" style="margin-top:0;">
 <p class="tdmfw_box_title" style="margin-top:0;">
-	<a id="settings"> <?php _e('Infusionsoft Settings ','formengine');?></a>|
-	<a id="feeds"><?php _e('Infusionsoft Feeds','formengine'); ?></a>
-	<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>	
+	<a id="settings"> <?php _e('Infusionsoft Settings ','jumpforms');?></a>|
+	<a id="feeds"><?php _e('Infusionsoft Feeds','jumpforms'); ?></a>
+	<a id="addinf" style="float: right;"><?php _e('Add Form','jumpforms'); ?></a>	
 </p>
 <?php
 $infusionForms = $wpdb->get_results("SELECT id,title FROM $table");
 ?>
 <?php
 if(isset($_POST['settings_submit'])) {
-	$settings = $wpdb->query("SELECT * FROM ".$wpdb->prefix."formengine_infusion_settings");
-	$wpdb->query("DELETE FROM ".$wpdb->prefix."formengine_infusion_settings");
-	$wpdb->insert($wpdb->prefix."formengine_infusion_settings", array(
+	$settings = $wpdb->query("SELECT * FROM ".$wpdb->prefix."jumpforms_infusion_settings");
+	$wpdb->query("DELETE FROM ".$wpdb->prefix."jumpforms_infusion_settings");
+	$wpdb->insert($wpdb->prefix."jumpforms_infusion_settings", array(
 				"inf_key" => $_POST['apikey'],
 				"inf_domain" => $_POST['subdomain']));	
 	
@@ -77,7 +77,7 @@ if(isset($_POST['settings_submit'])) {
 <div class="tdmfw_box_content">
 <div id="settingsview" style="display: none;">
 	<?php
-	$settings = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_infusion_settings");
+	$settings = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_infusion_settings");
 	?>
 	<form method="post">
 	API Key    <input type="text" id="apikey" name="apikey" style="width: 300px;" value="<?php if($settings) echo $settings[0]->inf_key; ?>" /><br /><br /><br />
@@ -90,7 +90,7 @@ if(isset($_POST['settings_submit'])) {
 	<form method="post">
 	<b>Forms Intergrated with Infusionsoft</b>
 	<?php 
-	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."formengine_infusion  ON ".$table.".id=".$wpdb->prefix."formengine_infusion.formid  AND infusion=1");
+	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$wpdb->prefix."jumpforms_infusion  ON ".$table.".id=".$wpdb->prefix."jumpforms_infusion.formid  AND infusion=1");
 //	print_r($results);die();
 	echo "<table>";
 	
@@ -221,7 +221,7 @@ if(isset($_POST['settings_submit'])) {
 		<?php foreach ($infusionForms as $inf) {  ?>
 		<option value="<?php echo $inf->id ?>"><?php echo $inf->title ?></option>
 		<?php } ?>
-	</select><img src="<?php echo plugins_url() ?>/formengine/assets/img/ajax-loader-large.gif" id="formlist_load" width="30px" height="30px" style="display: none;" />
+	</select><img src="<?php echo plugins_url() ?>/jumpforms/assets/img/ajax-loader-large.gif" id="formlist_load" width="30px" height="30px" style="display: none;" />
 	<hr />
 	<div id="showinfform">
 	<input type="hidden" id="optHtml" />
@@ -231,7 +231,7 @@ if(isset($_POST['settings_submit'])) {
 		<?php foreach ($webForm as $key => $name) {  ?>
 		<option value="<?php echo $key; ?>"><?php echo $name ?></option>
 		<?php } ?>
-	</select><img src="<?php echo plugins_url() ?>/formengine/assets/img/ajax-loader-large.gif" id="inflist_load" width="30px" height="30px" style="display: none;" /><br />
+	</select><img src="<?php echo plugins_url() ?>/jumpforms/assets/img/ajax-loader-large.gif" id="inflist_load" width="30px" height="30px" style="display: none;" /><br />
 	</div>
 	<div id="listings">
 		
@@ -265,7 +265,7 @@ if(isset($_POST['settings_submit'])) {
 
 <?php
 if(isset($_POST['save'])) {
-	$table_new = $wpdb->prefix . "formengine_infusion";	
+	$table_new = $wpdb->prefix . "jumpforms_infusion";	
 	$values = explode(",", $_POST['hiddenvname']);
 	$i = 0;
 	$fvalue = "";

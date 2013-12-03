@@ -7,7 +7,7 @@
 include_once( plugin_dir_path( __FILE__ ) . '/aweber_api/aweber_api.php');
 if(isset($_POST['account'])) {
 	$url = explode("?",$_SERVER['REQUEST_URI']);
-	$aurl = 'http://' . $_SERVER['HTTP_HOST'] . $url[0] . '?page=formengine_aweber';
+	$aurl = 'http://' . $_SERVER['HTTP_HOST'] . $url[0] . '?page=jumpforms_aweber';
 	update_option("accesskey", '');
 	update_option("accesssecret", '');
 	?>
@@ -18,8 +18,8 @@ if(isset($_POST['account'])) {
 }
 
 global $wpdb;
-$table = $wpdb->prefix . "formengine";	
-$table_aweber = $wpdb->prefix . "formengine_aweber"; 
+$table = $wpdb->prefix . "jumpforms";	
+$table_aweber = $wpdb->prefix . "jumpforms_aweber"; 
 // Step 1: assign these values from https://labs.aweber.com/apps
 $consumerKey = 'Akfb7SmhI9ZjZnfApE2j3HWd';
 $consumerSecret = 'jaUt65dRFyKBFLii46Bng9ZfKK8GfD9aTtXgUA6d'; 
@@ -38,7 +38,7 @@ if(isset($_POST['inf_save'])) {
 	}
 	if($_POST['addinf']) {
 		foreach($_POST['addinf'] as $a) {
-			$wpdb->update($wpdb->prefix."formengine", array("aweber" => 1), array("id" => $a));
+			$wpdb->update($wpdb->prefix."jumpforms", array("aweber" => 1), array("id" => $a));
 			$i = $wpdb->get_var("SELECT id FROM $table_aweber WHERE id=$a");
 			if(!$i) {
 	 			$wpdb->query("INSERT INTO $table_aweber(formid) VALUES('$a')");
@@ -120,9 +120,9 @@ if (!$accessKey || !$accessSecret){
 
 
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 		<ul id="tdmfw_crumbs">
-			<li><a href="?page=formengine_dashboard">JumpForms</a></li>
+			<li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
 			<li><a class="current">Aweber</a></li>
 	
 		</ul>
@@ -130,9 +130,9 @@ if (!$accessKey || !$accessSecret){
 	<div id="tdmfw_content">
 		<div class="tdmfw_box" style="margin-top:0;">
 			<p class="tdmfw_box_title" style="margin-top:0;">
-				<a id="settings"> <?php _e('Aweber Settings ','formengine');?></a>|
-				<a id="feeds"><?php _e('Aweber Feeds','formengine'); ?></a>
-				<a id="addinf" style="float: right;"><?php _e('Add Form','formengine'); ?></a>	
+				<a id="settings"> <?php _e('Aweber Settings ','jumpforms');?></a>|
+				<a id="feeds"><?php _e('Aweber Feeds','jumpforms'); ?></a>
+				<a id="addinf" style="float: right;"><?php _e('Add Form','jumpforms'); ?></a>	
 			</p>
 			<?php
 			$aweberForms = $wpdb->get_results("SELECT id,title FROM $table");
@@ -141,8 +141,8 @@ if (!$accessKey || !$accessSecret){
 			 /*
 			if(isset($_POST['settings_submit'])) {
 				
-				$wpdb->query("DELETE FROM ".$wpdb->prefix."formengine_infusion_settings");
-				$wpdb->insert($wpdb->prefix."formengine_infusion_settings", array(
+				$wpdb->query("DELETE FROM ".$wpdb->prefix."jumpforms_infusion_settings");
+				$wpdb->insert($wpdb->prefix."jumpforms_infusion_settings", array(
 							"inf_key" => $_POST['apikey'],
 							"inf_domain" => $_POST['subdomain']));	
 				
@@ -278,10 +278,10 @@ if (!$accessKey || !$accessSecret){
 
 <!--
 <div id="tdmfw">
-	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.formengine_version();?></span></h1></div>
+	<div id="tdmfw_header"><h1>JumpForms<span style="float:right;"><?php echo 'v'.jumpforms_version();?></span></h1></div>
 		<ul id="tdmfw_crumbs">
-			<li><a href="?page=formengine_dashboard">JumpForms</a></li>
-			<li><a class="current"><?php _e('Aweber','formengine'); ?></a></li>
+			<li><a href="?page=jumpforms_dashboard">JumpForms</a></li>
+			<li><a class="current"><?php _e('Aweber','jumpforms'); ?></a></li>
 			
 		</ul>
 	
