@@ -450,7 +450,7 @@ function jumpforms_install() {
 	);";	
 	
 	$table6 = $wpdb->prefix. "jumpforms_webinar_data";
-	$sql6 = "CREATE TABLE $table5 (
+	$sql6 = "CREATE TABLE $table6 (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		formid mediumint(9),
 		email text,
@@ -459,6 +459,17 @@ function jumpforms_install() {
 		webinar text,
 		UNIQUE KEY id (id)
 	);";
+	
+	$table7 = $wpdb->prefix. "jumpforms_aweber";
+	$sql7 = "CREATE TABLE $table7 (
+		id mediumint(9) NOT NULL AUTO_INCREMENT,
+		formid mediumint(9),
+		email text,
+		first_name text,
+		last_name text,
+		UNIQUE KEY id (id)
+	);";
+	
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta($sql);
 	dbDelta($sql2);
@@ -466,6 +477,7 @@ function jumpforms_install() {
 	dbDelta($sql4);
 	dbDelta($sql5);
 	dbDelta($sql6);
+	dbDelta($sql7);
 	//create_table($table, $sql);
 	//create_table($table2, $sql2);
 	//create_table($table3, $sql3);

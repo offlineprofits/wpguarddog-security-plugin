@@ -102,7 +102,7 @@ if(isset($_POST['save_feed'])) {
 						<table>
 							<tr>
 							<td>API Key</td>
-							<td><input type="text" name="apikey" value=<?php echo $result[0]->apikey; ?> /></td>
+							<td><input type="text" name="apikey" value=<?php echo $result[0]->apikey; ?> ></td>
 							</tr>
 							<tr>
 								<td>Email</td>
@@ -126,6 +126,8 @@ if(isset($_POST['save_feed'])) {
 					<b>Forms Intergrated with Webinar</b>
 					<?php 
 					$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$table_webinar." ON ".$table.".id=".$table_webinar.".formid AND $table.webinar=1");
+					//echo "SELECT * FROM $table INNER JOIN ".$table_webinar." ON ".$table.".id=".$table_webinar.".formid AND $table.webinar=1"; die();
+					//print_r($results);die();
 					echo "<table>";
 					
 					foreach($results as $r) {

@@ -167,6 +167,7 @@ if (!$accessKey || !$accessSecret){
 					<b>Forms Intergrated with Aweber</b>
 					<?php 
 					$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$table_aweber." ON ".$table.".id=".$table_aweber.".formid AND aweber=1");
+					//echo "SELECT * FROM $table INNER JOIN ".$table_aweber." ON ".$table.".id=".$table_aweber.".formid AND aweber=1"; die();
 					echo "<table>";
 					
 					foreach($results as $r) {
