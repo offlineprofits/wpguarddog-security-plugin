@@ -80,9 +80,20 @@ if(isset($_POST['settings_submit'])) {
 	$settings = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_infusion_settings");
 	?>
 	<form method="post">
-	API Key    <input type="text" id="apikey" name="apikey" style="width: 300px;" value="<?php if($settings) echo $settings[0]->inf_key; ?>" /><br /><br /><br />
-	Sub Domain <input type="text" id="subdomain" name="subdomain" value="<?php if($settings) echo $settings[0]->inf_domain; ?>" /><br /><br />
-	<input type="submit" value="Save Changes" name="settings_submit" class="btn btn-info" />
+	<table>
+	<tr>
+		<td>API Key</td>
+		<td><input type="text" id="apikey" name="apikey" style="width: 300px;" value="<?php if($settings) echo $settings[0]->inf_key; ?>" /></td>
+	</tr>
+	<tr>
+		<td>Sub Domain</td>
+		<td><input type="text" id="subdomain" name="subdomain" value="<?php if($settings) echo $settings[0]->inf_domain; ?>" /></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="submit" value="Save Changes" name="settings_submit" class="btn btn-info" /></td>
+	</tr>    
+	</table>
 	</form>
 </div>	
 

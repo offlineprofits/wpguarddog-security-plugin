@@ -20,18 +20,20 @@
 			</thead>-->
 			
 			<tbody>
-			
-				<!--<tr>
-					<td><?php if(is_plugin_active('jumpforms_paypal/index.php')) { echo '<a href="?page=jumpforms_paypal">'; _e('PayPal','jumpforms'); echo '</a>' ; } else { _e('PayPal','jumpforms'); } ?></td>
+				<?php if(file_exists('../wp-content/plugins/wp-sugar-free-master/wp-sugar-free.php')) { ?>
+				<tr>
+					<td><?php if(is_plugin_active('wp-sugar-free-master/wp-sugar-free.php')) { echo '<a href="?page=jumpforms_sugarfree">'; _e('Sugar Free','jumpforms'); echo '</a>' ; } else { _e('PayPal','jumpforms'); } ?></td>
 					<td>
-					<?php if(file_exists('../wp-content/plugins/jumpforms_paypal/index.php')) {
-						if(is_plugin_active('jumpforms_paypal/index.php')) { _e('Enabled','jumpforms'); } else { _e('Disabled','jumpforms'); }
+					<?php if(file_exists('../wp-content/plugins/wp-sugar-free-master/wp-sugar-free.php')) {
+						if(is_plugin_active('wp-sugar-free-master/wp-sugar-free.php')) { _e('Enabled','jumpforms'); } else { _e('Disabled','jumpforms'); }
 					} else { _e('Not Installed','jumpforms'); } ?>
 					</td>
-				</tr>-->
+				</tr>
+				<?php } else { ?>
 				<tr>
 					<td colspan="2"><?php _e('There are no extensions available yet.','jumpforms');?></td>
 				</tr>
+				<?php } ?>
 			
 			</tbody>
 		</table>

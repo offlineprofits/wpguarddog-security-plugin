@@ -4,9 +4,9 @@ if (isset($_POST)) {
 	require_once("../../../../../wp-config.php");
 	
     global $wpdb;
-    $table = $wpdb->prefix . "formengine";
-    $table2 = $wpdb->prefix . "formengine_data";
-	$table3 = $wpdb->prefix . "formengine_infusion";
+    $table = $wpdb->prefix . "jumpforms";
+    $table2 = $wpdb->prefix . "jumpforms_data";
+	$table3 = $wpdb->prefix . "jumpforms_infusion";
     $fid = $_POST['fid'];
     $row = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
 
@@ -17,7 +17,7 @@ if (isset($_POST)) {
 		$citrix = new CitrixAPI($accesstoken, $organizerkey);	
     }
 	if($row->infusion) {
-		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_infusion WHERE formid='$row->id'");
+		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_infusion WHERE formid='$row->id'");
 		$email = $_POST["f".$val[0]->email."_label"];
 		$fname = $_POST["f".$val[0]->first_name."_label"];
 		$lname = $_POST["f".$val[0]->last_name."_label"];
@@ -38,7 +38,7 @@ if (isset($_POST)) {
 	} 
 	if($row->aweber) {
 		
-		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."formengine_aweber WHERE formid='$row->id'");
+		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_aw WHERE formid='$row->id'");
 		$email = $_POST["f".$val[0]->email."_label"];
 		$fname = $_POST["f".$val[0]->first_name."_label"];
 		$lname = $_POST["f".$val[0]->last_name."_label"];
@@ -50,6 +50,42 @@ if (isset($_POST)) {
 			$aweber->add_subscriber($email, $_SERVER["REMOTE_ADDR"], $fname." ".$lname, $listid);
 		} 
 	}
+		
+	// SugarCRM
+	if($row->sugarcrm) {
+		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_sugarcrm WHERE formid='$row->id'");
+		require_once('nusoap/nusoap.php');  
+		$url = get_option("sugarfree_url");
+		$username = get_option("sugarfree_username");
+		$password = get_option("sugarfree_password");
+		$firstname = $val[0]->firstname; 
+		$lastname = $val[0]->lastname;
+		$email = $val[0]->email;
+		$addas = $val[0]->addas;
+		$module = ucfirst($addas);
+		$client = new nusoapclient($url.'/soap.php?wsdl',true);
+		
+		$user_auth = array(
+		                'user_auth' => array(
+		                'user_name' => $username,
+		                'password' => md5($password),
+		                'version' => '0.1'
+		        ), 'application_name' => 'wp-sugar-pro');
+		$login = $client->call('login',$user_auth);
+		$session_id = $login['id'];
+		//$recordInfo = $client->call('get_module_fields', array('session' => $session_id, 'module_name' => 'Opportunities'));
+		$set_entry_params = array(  
+	    'session' => $session_id,  
+	    'module_name' => $module,  
+	    'name_value_list'=>array(  
+	        array('name'=>'first_name','value'=>$firstname),  
+	        array('name'=>'last_name','value'=>$lastname),  
+	        array('name'=>'email', 'value'=>$email)
+	        ));  
+	   $result = $client->call('set_entry',$set_entry_params);  
+	}
+
+	// End of SugarCRM
 	
     if($row->captcha == "on") {
 		session_start();
@@ -148,7 +184,7 @@ if (isset($_POST)) {
 				if (is_uploaded_file($_FILES[$label]["tmp_name"])) {
 					$trimname = str_replace(' ','',$_FILES[$label]["name"]);
 					move_uploaded_file($_FILES[$label]["tmp_name"],'../uploads/'.$trimname);
-					$value = plugins_url().'/formengine/assets/uploads/'.$trimname;
+					$value = plugins_url().'/jumpforms/assets/uploads/'.$trimname;
 				}
 			}
 		}
@@ -208,7 +244,7 @@ if (isset($_POST)) {
 			if (is_uploaded_file($_FILES[$label]["tmp_name"])) {
 					$trimname = str_replace(' ','',$_FILES[$label]["name"]);
 					move_uploaded_file($_FILES[$label]["tmp_name"],'../uploads/'.$trimname);
-					$value = plugins_url().'/formengine/assets/uploads/'.$trimname;
+					$value = plugins_url().'/jumpforms/assets/uploads/'.$trimname;
 			}
 		}
 		
@@ -258,7 +294,7 @@ if (isset($_POST)) {
 				if (is_uploaded_file($_FILES[$label]["tmp_name"])) {
 					$trimname = str_replace(' ','',$_FILES[$label]["name"]);
 					move_uploaded_file($_FILES[$label]["tmp_name"],'../uploads/'.$trimname);
-					$value = plugins_url().'/formengine/assets/uploads/'.$trimname;
+					$value = plugins_url().'/jumpforms/assets/uploads/'.$trimname;
 				}
 			}
 		}

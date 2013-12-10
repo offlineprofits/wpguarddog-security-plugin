@@ -3,14 +3,11 @@
 Plugin Name: JumpForms
 Plugin URI: http://www.wpfrogs.com/releases/wp-update.php?hash=
 Description: JumpForms makes it easy to build forms for your WordPress site
-Version: 1.2
+Version: 1.3.1
 Author: WPfrogs
 Author URI: http://wpfrogs.com
 */
 
-//require_once 'plugin-updates/plugin-update-checker.php';
-
-//require_once 'AWeber-API-PHP-Library-master/aweber_api/aweber_api.php';
 
 require_once('lib/PLE_Client_Util.php');
 require_once("assets/PHP-iSDK-master/src/isdk.php");
@@ -34,6 +31,7 @@ $plugin = plugin_basename(__FILE__);
 //add_action('init','jumpforms_init');
 add_action('admin_menu','jumpforms_menu');
 register_activation_hook(__FILE__,'jumpforms_install');
+register_deactivation_hook(__FILE__,'jumpforms_uninstall');
 add_filter("plugin_action_links_$plugin", 'jumpforms_dashboard_link' );
 add_shortcode('jumpforms','jumpforms_display');
 add_shortcode('jumpforms_modal','jumpforms_display_modal');
@@ -42,10 +40,15 @@ add_action( 'admin_enqueue_scripts', 'infusion_tabbing_script' );
 add_action( 'admin_footer',  'add_popup_content' );
 add_action('wp_ajax_formchange', 'formchange_callback');
 add_action('wp_ajax_infselect', 'infselect_callback');
-add_action('wp_ajax_infusion', 'infusion_callback');
+add_action('wp_ajax_sugartestaccess', 'sugarcrm_testaccess');
+//add_action('wp_ajax_infusion', 'infusion_callback');
 
-function infusion_callback() {
-	
+
+function jumpforms_uninstall() {
+	delete_option("accesskey");
+	delete_option("accesssecret");
+	delete_option("consumerkey");
+	delete_option("consumersecret");
 }
 
 function infselect_callback() {
@@ -61,6 +64,10 @@ function infselect_callback() {
 	}
 	echo json_encode($var);
 	die();	
+}
+function sugarcrm_testaccess() {
+	require_once("assets/includes/test-access.php");
+	die();
 }
 
 function formchange_callback() {
@@ -339,6 +346,8 @@ function jumpforms_menu() {
 	add_submenu_page('jumpforms_dashboard', 'Webinar', 'Webinar', 'administrator', 'jumpforms_webinar', 'jumpforms_webinar');
 	add_submenu_page(NULL, 'Wipe Database', 'Wipe Database', 'administrator', 'jumpforms_wipe', 'jumpforms_wipe');
 	add_submenu_page('jumpforms_dashboard', "Aweber", "Aweber", "administrator", 'jumpforms_aweber','jumpforms_aweber');
+	add_submenu_page('jumpforms_dashboard', "Sugarfree", "Sugarfree", "administrator", 'jumpforms_sugarfree','jumpforms_sugarfree');
+	//jumpforms_aweber
 	if(is_plugin_active('jumpforms_paypal/index.php')) { add_submenu_page(NULL, 'Formengine - PayPal', 'Formengine - PayPal', 'administrator', 'jumpforms_paypal', 'jumpforms_paypal'); }
 	
 }
@@ -394,6 +403,7 @@ function jumpforms_install() {
 	  webinar text,
 	  infusion text,
 	  aweber text,
+	  sugarfree text,
 	  formid text,
 	  formname text,
 	  formversion text,
@@ -414,13 +424,6 @@ function jumpforms_install() {
 	  UNIQUE KEY id (id)
 	);";
 	
-	/*$table3 = $wpdb->prefix . "jumpforms_rest";
-	$sql3 = "CREATE TABLE $table2 (
-	  id mediumint(9) NOT NULL AUTO_INCREMENT,
-	  date timestamp NOT NULL,
-	  fid text NOT NULL,
-	  UNIQUE KEY id (id)
-	);";*/
 	$table3 = $wpdb->prefix . "jumpforms_infusion";
 	$sql3 = "CREATE TABLE $table3 (
 	  id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -469,6 +472,17 @@ function jumpforms_install() {
 		last_name text,
 		UNIQUE KEY id (id)
 	);";
+	$table8 = $wpdb->prefix. "jumpforms_sugarfree";
+	$sql8 = "CREATE TABLE $table7 (
+		id mediumint(9) NOT NULL AUTO_INCREMENT,
+		formid mediumint(9),
+		email text,
+		first_name text,
+		last_name text,
+		addas text,
+		UNIQUE KEY id (id)
+	);";
+	
 	
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta($sql);
@@ -478,6 +492,7 @@ function jumpforms_install() {
 	dbDelta($sql5);
 	dbDelta($sql6);
 	dbDelta($sql7);
+	dbDelta($sql8);
 	//create_table($table, $sql);
 	//create_table($table2, $sql2);
 	//create_table($table3, $sql3);
@@ -2901,6 +2916,16 @@ function jumpforms_aweber() {
 	require('assets/includes/aweber.php');
 	
 }
-
+function jumpforms_sugarfree() {
+	//initjumpformspleClient();
+	//global $pleClient;
+	//$activation_form= $pleClient->preCheckLicense();
+	//if($activation_form) 
+		//return;
+	wp_register_script('sugarcrm', plugins_url('/assets/js/backend/sugarcrm.js',__FILE__ )); wp_enqueue_script('sugarcrm');
+	wp_register_style('jumpforms', plugins_url('/assets/css/framework.css',__FILE__ )); wp_enqueue_style('jumpforms');
+	require('assets/includes/sugarfree.php');
+	
+}
 
 ?>
