@@ -84,12 +84,10 @@ if (isset($_POST)) {
 	        ));  
 	   $result = $client->call('set_entry',$set_entry_params);  
 	}
-
 	// End of SugarCRM
 	
     if($row->captcha == "on") {
 		session_start();
-				
 		if(isset($_POST['security_code']) && !empty($_SESSION['security_code'])) {
 			if(($_SESSION['security_code'] == $_POST['security_code'])) {
 				unset($_SESSION['security_code']);

@@ -93,7 +93,54 @@ if(isset($_POST['test_submit'])) {
 	//$session_id = $login['id'];
 	 						
 }
+if(isset($_POST["save_opportunity"])) {
+	
 
+	$ids = $wpdb->get_results("SELECT id FROM $table_sugarfree");
+	foreach($ids as $id) {
+		if($_POST['addas-'.$id->id] == "opportunity") {
+			$where = array("id" => $id->id);
+			$wpdb->update($table_sugarfree, array("addas" => "opportunity"), $where);	
+			$serialize_array["zip"] = $_POST["zip-".$id->id];
+			$serialize_array["reason"] = $_POST["reason-".$id->id];
+			$serialize_array["aprice"] = $_POST["aprice-".$id->id];
+			$serialize_array["address"] = $_POST["address-".$id->id];
+			$serialize_array["email"] = $_POST["email-".$id->id];
+			$serialize_array["phone"] = $_POST["phone-".$id->id];
+			$serialize_array["firstname"] = $_POST["firstname-".$id->id];
+			$serialize_array["lastname"] = $_POST["lastname-".$id->id];
+			$serialize_array["entryid"] = $_POST["entryid-".$id->id];
+			$serialize_array["entrydate"] = $_POST["entrydate-".$id->id];
+			$serialize_array["sourceurl"] = $_POST["sourceurl-".$id->id];
+			$serialize_array["ip"] = $_POST["ip-".$id->id]; 
+			$tot_val = serialize($serialize_array);
+			$data = array(
+					"value" => $tot_val
+					);	
+		
+			$wpdb->update($table_sugarfree, $data, $where);	
+		}
+	}
+	
+	/*foreach($_POST as $key => $sa) {
+		if($key != "save_opportunity"){
+			$serialize_array[$$key] = $a; 
+		}
+	}
+	//$serialize_array = 
+	foreach($ids as $id) {
+		$data = array(
+					"email" => $_POST['email-'.$id->id],
+					"first_name" => $_POST['firstname-'.$id->id],
+					"last_name" => $_POST['lastname-'.$id->id],
+					"addas" => $_POST["addas"]
+					);	
+		
+		$where = array("id" => $id->id);
+		$wpdb->update($table_sugarfree, $data, $where);	
+	}*/
+//	print_r($_POST);die();
+}
 
 if(isset($_POST['inf_save'])) {
 	$result1 = $wpdb->get_results("SELECT * FROM $table");
@@ -185,83 +232,360 @@ if(isset($_POST['save_feed'])) {
 						$values = $wpdb->get_results("SELECT * FROM $table_sugarfree WHERE formid=$r->id");
 						$order  = $r->sortorder;
 						$sortrows = explode(",", $order);
-					?>
-					<tr><td><a id="<?php $r->id ?>"><?php echo $r->title; ?></a></td>
-						<td>
-							<select name="addas">
-								<option <?php if($values[0]->addas == "") echo "selected='selected'" ?> value="">Add As</option>
-								<option <?php if($values[0]->addas == "lead") echo "selected='selected'" ?> value="lead">Lead</option>
-								<option <?php if($values[0]->addas == "contact") echo "selected='selected'" ?> value="contact">Contact</option>
-								<option <?php if($values[0]->addas == "opportunity") echo "selected='selected'" ?> value="opportunity">Opportunity</option>
-							</select>
-						</td>
-					</tr>
 						
-						<tr>
-							<td>Email</td>
+						?>
+						<tr><td><a id="<?php echo $r->id ?>"><?php echo $r->title; ?></a></td>
 							<td>
-							<select name="email-<?php echo $r->id; ?>">
-							<option value=""></option>
-							<?php foreach ($sortrows as $counter) {
-							//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
-							$type = 'f'.$counter.'_type';
-							$label = 'f'.$counter.'_label';
-							if($r->$type == "email" ) {
-							?>
-								<option value="<?php echo $counter; ?>" <?php if($values[0]->email == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
-							<?php 
-							} 
-							?>
-				
-							<?php } ?>
-							</select>
+								<select name="addas-<?php echo $r->id ?>" id="addas" class="addas">
+									<option <?php if($values[0]->addas == "") echo "selected='selected'" ?> value="">Add As</option>
+									<option <?php if($values[0]->addas == "lead") echo "selected='selected'" ?> value="lead">Lead</option>
+									<option <?php if($values[0]->addas == "contact") echo "selected='selected'" ?> value="contact">Contact</option>
+									<option <?php if($values[0]->addas == "opportunity") echo "selected='selected'" ?> value="opportunity">Opportunity</option>
+								</select>
+								<input type="hidden" value="<?php echo $r->id ?>" name="" id="" />
 							</td>
 						</tr>
-						<tr>
-							<td>First Name</td>
-							<td>
-							<select name="firstname-<?php echo $r->id; ?>">
-							<option value=""></option>
-							<?php foreach ($sortrows as $counter) {
-								
-							$type = 'f'.$counter.'_type';
-							$label = 'f'.$counter.'_label';
-							if($r->$type == "input" ) {
-							?>
-								<option value="<?php echo $counter; ?>" <?php if($values[0]->first_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
-							<?php 
-							} 
-							?>
-							
-							<?php } ?>
-							</select>
-							</td>
-						</tr>
-						<tr>
-							<td>Last Name</td>
-							<td>
-							<select name="lastname-<?php echo $r->id; ?>">
-							<option value=""></option>
-							<?php foreach ($sortrows as $counter) {
-								
-							$type = 'f'.$counter.'_type';
-							$label = 'f'.$counter.'_label';
-							if($r->$type == "input" ) {
-							?>
-								<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
-							<?php 
-							} 
-							?>
-				
-							<?php } ?>
-							</select>
-							</td>
-						</tr>
-						<tr><td><hr /></td><td><hr /></td></tr>
-					<?php } ?>
-					<tr><td></td><td><input type="submit" class="button-primary" value="Save Changes" name="save_feed" /></td></tr>
-					</table>
+						</table>
+						<table id="lead_contact-<?php echo $r->id ?>">
+							<tr>
+								<td>Email</td>
+								<td>
+								<select name="email-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+								//$val = $wpdb->get_var("SELECT email FROM $table_infusionsoft WHERE id=''");
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type == "email" ) {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->email == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
 					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>First Name</td>
+								<td>
+								<select name="firstname-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" ) {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->first_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+								
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Last Name</td>
+								<td>
+								<select name="lastname-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" ) {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+				
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr><td><hr /></td><td><hr /></td></tr>
+						
+							<!--<tr><td></td><td><input type="submit" class="button-primary" value="Save Changes" name="save_feed" /></td></tr>-->
+						</table>
+				
+					
+						<table id="opportunities-<?php echo $r->id ?>" style="display: none;">
+						<?php $upval = unserialize($values[0]->value); ?>
+							<tr>
+								<td>Zip Code</td>
+								<td>
+								<select name="zip-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($upval["zip"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Reason for Selling</td>
+								<td>
+								<select name="reason-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Asking Price</td>
+								<td>
+								<select name="aprice-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Address</td>
+								<td>
+								<select name="address-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>City</td>
+								<td>
+								<select name="city-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Email</td>
+								<td>
+								<select name="email-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type =="email") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Phone Number</td>
+								<td>
+								<select name="phone-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>First Name</td>
+								<td>
+								<select name="firstname-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Last Name</td>
+								<td>
+								<select name="lastname-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Entry Id</td>
+								<td>
+								<select name="entryid-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Entry Date</td>
+								<td>
+								<select name="entrydate-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+				
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Source URL</td>
+								<td>
+								<select name="sourceurl-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td>User IP</td>
+								<td>
+								<select name="ip-<?php echo $r->id; ?>">
+								<option value=""></option>
+								<?php foreach ($sortrows as $counter) {
+									
+								$type = 'f'.$counter.'_type';
+								$label = 'f'.$counter.'_label';
+								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+								?>
+									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+								<?php 
+								} 
+								?>
+					
+								<?php } ?>
+								</select>
+								</td>
+							</tr>
+							<tr><td><hr /></td><td><hr /></td></tr>
+							
+						</table>
+					
+					<?php } ?>
+					<table>
+						<tr>
+							<td></td>
+							<td><input type="submit" class="button-primary" value="Save Changes" name="save_opportunity" /></td>
+						</tr>
+					</table>
 					</form>
 				</div>	
 				
@@ -289,3 +613,20 @@ if(isset($_POST['save_feed'])) {
 		</div>	
 	</div>
 </div>
+<script>
+	jQuery(function() {
+		jQuery(".addas").change(function() {
+			id = jQuery(this).next().val();
+			alert(id)
+			val = jQuery(this).val();
+			if(val == "lead" || val == "contact") {
+				jQuery("#opportunities-"+id).hide();
+				jQuery("#lead_contact-"+id).show();
+			}
+			if(val == "opportunity") {
+				jQuery("#lead_contact-"+id).hide();
+				jQuery("#opportunities-"+id).show();
+			}
+		})
+	})
+</script>
