@@ -1,6 +1,6 @@
 jQuery(function($) {
 	
-	$('table#formengine').tableDnD({
+	$('table#jumpforms').tableDnD({
 	onDragClass: "dragging",
 	onDrop: function(table, row) {
 		var rows = table.tBodies[0].rows;
@@ -15,7 +15,7 @@ jQuery(function($) {
 	
 	});
 
-    $("table#formengine tr").hover(function() {
+    $("table#jumpforms tr").hover(function() {
           $(this.cells[0]).addClass('candrag');
     }, function() {
           $(this.cells[0]).removeClass('candrag');

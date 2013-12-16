@@ -1,4 +1,4 @@
-jQuery(function($) {
+/*jQuery(function($) {
 	
 	$('table#formengine').tableDnD({
 	onDragClass: "dragging",
@@ -25,4 +25,4 @@ jQuery(function($) {
 	    $( $(this).find("a").attr('href') ).slideToggle("slow");
 	  });
    
-});
+});*/

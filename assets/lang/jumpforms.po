@@ -1,0 +1,611 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. Text in echo
+#: jumpforms/index.php:1427
+msgid "Acceptance"
+msgstr "Acceptance"
+
+#. Text in echo
+#: jumpforms/index.php:346 jumpforms/index.php:1464
+msgid "Action"
+msgstr "Action"
+
+#. Text in echo
+#: jumpforms/index.php:1289
+msgid "Admin And User"
+msgstr "Admin And User"
+
+#. Text in echo
+#: jumpforms/index.php:1287
+msgid "Admin Only"
+msgstr "Admin Only"
+
+#. Text in function
+#: jumpforms/index.php:1681
+msgid "All jumpforms data has been wiped. Please reactivate the plugin"
+msgstr "All jumpforms data has been wiped. Please reactivate the plugin"
+
+#. Text in function
+#: jumpforms/index.php:1609
+msgid "All jumpforms data removed!"
+msgstr "All jumpforms data removed!"
+
+#. Text in echo
+#: jumpforms/index.php:1217
+msgid "Animated"
+msgstr "Animated"
+
+#. Text in echo
+#: jumpforms/index.php:456
+msgid "Application"
+msgstr "Application"
+
+#. Text in echo
+#: jumpforms/index.php:961
+msgid "Are you sure you want to continue?"
+msgstr "Are you sure you want to continue?"
+
+#. Text in echo
+#: jumpforms/index.php:362
+msgid "Are you sure you want to delete this form?"
+msgstr "Are you sure you want to delete this form?"
+
+#. Text in echo
+#: jumpforms/index.php:1476
+msgid "Are you sure you want to delete this response?"
+msgstr "Are you sure you want to delete this response?"
+
+#. Text in echo
+#: jumpforms/index.php:2266
+msgid "Back"
+msgstr "Back"
+
+#. Text in echo
+#: jumpforms/index.php:1215 jumpforms/index.php:1298
+msgid "Basic"
+msgstr "Basic"
+
+#. Text in echo
+#: jumpforms/index.php:455
+msgid "Blank"
+msgstr "Blank"
+
+#. Text in echo
+#: jumpforms/index.php:457
+msgid "Booking"
+msgstr "Booking"
+
+#. Text in echo
+#: jumpforms/index.php:472
+msgid "Build Form"
+msgstr "Build Form"
+
+#. Text in echo
+#: jumpforms/index.php:1253
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
+
+#. Text in echo
+#: jumpforms/index.php:1422
+msgid "Checkboxes"
+msgstr "Checkboxes"
+
+#. Text in echo
+#: jumpforms/index.php:442
+msgid "Choose a template from the list below"
+msgstr "Choose a template from the list below"
+
+#. Text in echo
+#: jumpforms/index.php:458
+msgid "Competition"
+msgstr "Competition"
+
+#. Text in echo
+#: jumpforms/index.php:1202
+msgid "Configuration"
+msgstr "Configuration"
+
+#. Text in echo
+#: jumpforms/index.php:459
+msgid "Contact"
+msgstr "Contact"
+
+#. Text in echo
+#: jumpforms/index.php:1430
+msgid "Countries"
+msgstr "Countries"
+
+#. Text in echo
+#: jumpforms/index.php:1510
+msgid "Create Form Page"
+msgstr "Create Form Page"
+
+#. Text in echo
+#: jumpforms/index.php:373 jumpforms/index.php:377
+msgid "Create new form"
+msgstr "Create new form"
+
+#. Text in echo
+#: jumpforms/index.php:2310 jumpforms/index.php:2322
+msgid "Custom CSS"
+msgstr "Custom CSS"
+
+#. Text in echo
+#: jumpforms/index.php:2321
+msgid ""
+"Customise the design of your jumpforms forms without ever having to touch "
+"the underlying code."
+msgstr ""
+"Customise the design of your jumpforms forms without ever having to touch "
+"the underlying code."
+
+#. Text in echo
+#: jumpforms/index.php:251
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#. Text in echo
+#: jumpforms/index.php:1420
+msgid "Date Picker"
+msgstr "Date Picker"
+
+#. Text in echo
+#: jumpforms/index.php:310 jumpforms/index.php:1463
+#: jumpforms/index.php:1556
+msgid "Date/Time"
+msgstr "Date/Time"
+
+#. Text in echo
+#: jumpforms/index.php:362
+msgid "Delete Form"
+msgstr "Delete Form"
+
+#. Text in echo
+#: jumpforms/index.php:460
+msgid "Delivery"
+msgstr "Delivery"
+
+#. Text in echo
+#: jumpforms/index.php:1256
+msgid "Disabled"
+msgstr "Disabled"
+
+#. Text in echo
+#: jumpforms/index.php:1423
+msgid "Dropdown Menu"
+msgstr "Dropdown Menu"
+
+#. Text in echo
+#: jumpforms/index.php:1305 jumpforms/index.php:1418
+msgid "Email Address"
+msgstr "Email Address"
+
+#. Text in echo
+#: jumpforms/index.php:1318
+msgid "Email Message"
+msgstr "Email Message"
+
+#. Text in echo
+#: jumpforms/index.php:1312
+msgid "Email Subject"
+msgstr "Email Subject"
+
+#. Text in echo
+#: jumpforms/index.php:1257
+msgid "Enabled"
+msgstr "Enabled"
+
+#. Text in echo
+#: jumpforms/index.php:1238
+msgid "Error Page"
+msgstr "Error Page"
+
+#. Text in function
+#: jumpforms/index.php:1609
+msgid "Error! The form could not be imported."
+msgstr "Error! The form could not be imported."
+
+#. Text in echo
+#: jumpforms/index.php:1499 jumpforms/index.php:1500
+msgid "Export"
+msgstr "Export"
+
+#. Text in echo
+#: jumpforms/index.php:989 jumpforms/index.php:1001
+msgid "Export Form"
+msgstr "Export Form"
+
+#. Text in echo
+#: jumpforms/index.php:1498
+msgid "Expport"
+msgstr "Expport"
+
+#. Text in echo
+#: jumpforms/index.php:461
+msgid "Feedback"
+msgstr "Feedback"
+
+#. Text in echo
+#: jumpforms/index.php:1425
+msgid "File Upload"
+msgstr "File Upload"
+
+#. Text in echo
+#: jumpforms/index.php:311 jumpforms/index.php:343 jumpforms/index.php:1549
+msgid "Form"
+msgstr "Form"
+
+#. Text in echo
+#: jumpforms/index.php:1331
+msgid "Form Builder"
+msgstr "Form Builder"
+
+#. Text in echo
+#: jumpforms/index.php:1543
+msgid "Form Details"
+msgstr "Form Details"
+
+#. Text in echo
+#: jumpforms/index.php:1346
+msgid "Form Fields"
+msgstr "Form Fields"
+
+#. Text in echo
+#: jumpforms/index.php:1339
+msgid "Form Sections"
+msgstr "Form Sections"
+
+#. Text in echo
+#: jumpforms/index.php:446
+msgid "Form Templates"
+msgstr "Form Templates"
+
+#. Text in echo
+#: jumpforms/index.php:1169
+msgid "Form Title"
+msgstr "Form Title"
+
+#. Text in echo
+#: jumpforms/index.php:289
+msgid "jumpforms News"
+msgstr "jumpforms News"
+
+#. Text in echo
+#: jumpforms/index.php:1299
+msgid "Full"
+msgstr "Full"
+
+#. Text in echo
+#: jumpforms/index.php:1512 jumpforms/index.php:1609
+#: jumpforms/index.php:1051 jumpforms/index.php:1128
+#: jumpforms/index.php:1604 jumpforms/index.php:2331
+msgid "Go Back"
+msgstr "Go Back"
+
+#. Text in echo
+#: jumpforms/index.php:1226 jumpforms/index.php:1241
+msgid "Home"
+msgstr "Home"
+
+#. Text in echo
+#: jumpforms/index.php:463 jumpforms/index.php:1127
+msgid "Import"
+msgstr "Import"
+
+#. Text in echo
+#: jumpforms/index.php:1109 jumpforms/index.php:1121
+msgid "Import Data"
+msgstr "Import Data"
+
+#. Text in echo
+#: jumpforms/index.php:1497
+msgid "Import data into"
+msgstr "Import data into"
+
+#. Text in echo
+#: jumpforms/index.php:1492
+msgid "Import/Export"
+msgstr "Import/Export"
+
+#. Text in echo
+#: jumpforms/index.php:996
+msgid "In order to re-import this form, please make a copy of the code below"
+msgstr "In order to re-import this form, please make a copy of the code below"
+
+#. Text in echo
+#: jumpforms/index.php:1359
+msgid "Label"
+msgstr "Label"
+
+#. Text in echo
+#: jumpforms/index.php:303
+msgid "Latest Responses"
+msgstr "Latest Responses"
+
+#. Text in echo
+#: jumpforms/index.php:374 jumpforms/index.php:1511
+msgid "Manage Custom CSS"
+msgstr "Manage Custom CSS"
+
+#. Text in echo
+#: jumpforms/index.php:1263
+msgid "Modal Text"
+msgstr "Modal Text"
+
+#. Text in echo
+#: jumpforms/index.php:1424
+msgid "Multiple Choice"
+msgstr "Multiple Choice"
+
+#. Text in echo
+#: jumpforms/index.php:338
+msgid "My Forms"
+msgstr "My Forms"
+
+#. Text in echo
+#: jumpforms/index.php:290
+msgid "Need help? Visit 2DMonkey Support"
+msgstr "Need help? Visit 2DMonkey Support"
+
+#. Text in echo
+#: jumpforms/index.php:426
+msgid "New Form"
+msgstr "New Form"
+
+#. Text in echo
+#: jumpforms/index.php:2267
+msgid "Next"
+msgstr "Next"
+
+#. Text in echo
+#: jumpforms/index.php:963
+msgid "No - Cancel"
+msgstr "No - Cancel"
+
+#. Text in echo
+#: jumpforms/index.php:1276 jumpforms/index.php:1283
+msgid "Notifications"
+msgstr "Notifications"
+
+#. Text in echo
+#: jumpforms/index.php:1295
+msgid "Notifications Type"
+msgstr "Notifications Type"
+
+#. Text in echo
+#: jumpforms/index.php:1214 jumpforms/index.php:1286
+msgid "Off"
+msgstr "Off"
+
+#. Text in echo
+#: jumpforms/index.php:1417
+msgid "Paragraph Text"
+msgstr "Paragraph Text"
+
+#. Text in echo
+#: jumpforms/index.php:1419
+msgid "Password"
+msgstr "Password"
+
+#. Text in echo
+#: jumpforms/index.php:465
+msgid "Paste your import code below:"
+msgstr "Paste your import code below:"
+
+#. Text in echo
+#: jumpforms/index.php:1211
+msgid "Progress Bars"
+msgstr "Progress Bars"
+
+#. Text in echo
+#: jumpforms/index.php:945
+msgid "Remove All Data"
+msgstr "Remove All Data"
+
+#. Text in echo
+#: jumpforms/index.php:375
+msgid "Remove all data"
+msgstr "Remove all data"
+
+#. Text in echo
+#: jumpforms/index.php:1362
+msgid "Required"
+msgstr "Required"
+
+#. Text in echo
+#: jumpforms/index.php:1537
+msgid "Response"
+msgstr "Response"
+
+#. Text in echo
+#: jumpforms/index.php:1568
+msgid "Response Details"
+msgstr "Response Details"
+
+#. Text in echo
+#: jumpforms/index.php:345 jumpforms/index.php:1454
+msgid "Responses"
+msgstr "Responses"
+
+#. Text in echo
+#: jumpforms/index.php:1509 jumpforms/index.php:2330
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#. Text in echo
+#: jumpforms/index.php:1413
+msgid "Section End"
+msgstr "Section End"
+
+#. Text in echo
+#: jumpforms/index.php:1412
+msgid "Section Start"
+msgstr "Section Start"
+
+#. Text in echo
+#: jumpforms/index.php:2257
+msgid "Security Code"
+msgstr "Security Code"
+
+#. Text in echo
+#: jumpforms/index.php:1416
+msgid "Single Line Text"
+msgstr "Single Line Text"
+
+#. Text in echo
+#: jumpforms/index.php:1434
+msgid "States - Australia"
+msgstr "States - Australia"
+
+#. Text in echo
+#: jumpforms/index.php:1433
+msgid "States - Canada"
+msgstr "States - Canada"
+
+#. Text in echo
+#: jumpforms/index.php:1432
+msgid "States - USA"
+msgstr "States - USA"
+
+#. Text in echo
+#: jumpforms/index.php:1195
+msgid "Statistics"
+msgstr "Statistics"
+
+#. Text in echo
+#: jumpforms/index.php:1216
+msgid "Striped"
+msgstr "Striped"
+
+#. Text in function
+#: jumpforms/index.php:2313
+msgid "Success! Custom CSS saved!"
+msgstr "Success! Custom CSS saved!"
+
+#. Text in function
+#: jumpforms/index.php:1609
+msgid "Success! The form was created!"
+msgstr "Success! The form was created!"
+
+#. Text in function
+#: jumpforms/index.php:1609
+msgid "Success! The form was imported."
+msgstr "Success! The form was imported."
+
+#. Text in function
+#: jumpforms/index.php:1609
+msgid "Success! The response was deleted!"
+msgstr "Success! The response was deleted!"
+
+#. Text in echo
+#: jumpforms/index.php:1426
+msgid "Text"
+msgstr "Text"
+
+#. Text in echo
+#: jumpforms/index.php:1223
+msgid "Thank You Page"
+msgstr "Thank You Page"
+
+#. Text in echo
+#: jumpforms/index.php:263
+msgid "There is a new version of jumpforms available to download"
+msgstr "There is a new version of jumpforms available to download"
+
+#. Text in function
+#: jumpforms/index.php:278
+msgid "There was a problem fetching 2DMonkey News"
+msgstr "There was a problem fetching 2DMonkey News"
+
+#. Text in echo
+#: jumpforms/index.php:959
+msgid ""
+"This action will remove all jumpforms data from the WordPress database."
+msgstr ""
+"This action will remove all jumpforms data from the WordPress database."
+
+#. Text in echo
+#: jumpforms/index.php:1421
+msgid "Time Picker"
+msgstr "Time Picker"
+
+#. Text in echo
+#: jumpforms/index.php:960
+msgid ""
+"To continue using jumpforms after data has been removed, please reactivate "
+"the plugin."
+msgstr ""
+"To continue using jumpforms after data has been removed, please reactivate "
+"the plugin."
+
+#. Text in echo
+#: jumpforms/index.php:1116
+msgid ""
+"To import data into this form please upload a CSV file using the form below"
+msgstr ""
+"To import data into this form please upload a CSV file using the form below"
+
+#. Text in echo
+#: jumpforms/index.php:1360
+msgid "Type"
+msgstr "Type"
+
+#. Text in echo
+#: jumpforms/index.php:1431
+msgid "UK Counties"
+msgstr "UK Counties"
+
+#. Text in echo
+#: jumpforms/index.php:263
+msgid "Update to version"
+msgstr "Update to version"
+
+#. Text in echo
+#: jumpforms/index.php:462
+msgid "Upload"
+msgstr "Upload"
+
+#. Text in echo
+#: jumpforms/index.php:1288
+msgid "User Only"
+msgstr "User Only"
+
+#. Text in echo
+#: jumpforms/index.php:1361
+msgid "Value/Options"
+msgstr "Value/Options"
+
+#. Text in echo
+#: jumpforms/index.php:344
+msgid "Views"
+msgstr "Views"
+
+#. Text in echo
+#: jumpforms/index.php:962
+msgid "Yes - REMOVE ALL DATA"
+msgstr "Yes - REMOVE ALL DATA"
+
+#. Text in function
+#: jumpforms/index.php:377
+msgid "You do not have any forms"
+msgstr "You do not have any forms"
+
+#. Text in echo
+#: jumpforms/index.php:1499
+msgid "data to .CSV"
+msgstr "data to .CSV"
+
+#. Text in echo
+#: jumpforms/index.php:1500
+msgid "data to .TXT"
+msgstr "data to .TXT"

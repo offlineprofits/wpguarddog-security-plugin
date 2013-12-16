@@ -49,6 +49,9 @@ function jumpforms_uninstall() {
 	delete_option("accesssecret");
 	delete_option("consumerkey");
 	delete_option("consumersecret");
+	delete_option("sugarfree_url");
+	delete_option("sugarfree_username");
+	delete_option("sugarfree_password");
 }
 
 function infselect_callback() {
@@ -124,8 +127,8 @@ function custom_popup_script() {
 
 function jumpforms_init() {
 	
-	require('assets/includes/notifier.php');
-	load_plugin_textdomain('jumpforms', false, dirname(plugin_basename(__FILE__)) . '/assets/lang/');
+	//require('assets/includes/notifier.php');
+	//load_plugin_textdomain('jumpforms', false, dirname(plugin_basename(__FILE__)) . '/assets/lang/');
 }
 
 function jumpforms_dashboard_link($links) { 
@@ -348,7 +351,7 @@ function jumpforms_menu() {
 	add_submenu_page('jumpforms_dashboard', "Aweber", "Aweber", "administrator", 'jumpforms_aweber','jumpforms_aweber');
 	add_submenu_page('jumpforms_dashboard', "Sugarfree", "Sugarfree", "administrator", 'jumpforms_sugarfree','jumpforms_sugarfree');
 	//jumpforms_aweber
-	if(is_plugin_active('jumpforms_paypal/index.php')) { add_submenu_page(NULL, 'Formengine - PayPal', 'Formengine - PayPal', 'administrator', 'jumpforms_paypal', 'jumpforms_paypal'); }
+	if(is_plugin_active('jumpforms_paypal/index.php')) { add_submenu_page(NULL, 'Jumpforms - PayPal', 'Jumpforms - PayPal', 'administrator', 'jumpforms_paypal', 'jumpforms_paypal'); }
 	
 }
 
@@ -473,13 +476,14 @@ function jumpforms_install() {
 		UNIQUE KEY id (id)
 	);";
 	$table8 = $wpdb->prefix. "jumpforms_sugarfree";
-	$sql8 = "CREATE TABLE $table7 (
+	$sql8 = "CREATE TABLE $table8 (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		formid mediumint(9),
 		email text,
 		first_name text,
 		last_name text,
 		addas text,
+		value text,
 		UNIQUE KEY id (id)
 	);";
 	

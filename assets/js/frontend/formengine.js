@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+/*jQuery(document).ready(function ($) {
 	$("form#formengine").validationEngine({promptPosition : "bottomLeft"});
 	$('#myTab').css("display", "none");
 	$('.datepick').datepicker({format:'dd/mm/yyyy',weekStart:1});
@@ -71,4 +71,4 @@ function isLastTab() {
   return e;
 }
 	
-});
+});*/

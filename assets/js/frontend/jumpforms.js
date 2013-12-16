@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-	$("form#formengine").validationEngine({promptPosition : "bottomLeft"});
+	$("form#jumpforms").validationEngine({promptPosition : "bottomLeft"});
 	$('#myTab').css("display", "none");
 	$('.datepick').datepicker({format:'dd/mm/yyyy',weekStart:1});
 	$('.timepick').timepicker({template : 'dropdown', showInputs: true});
@@ -13,15 +13,15 @@ if($("#myTab li").length < 2)
 }
 
 $('#myTab li a').on('click', function() { 
-	if($("form#formengine").validationEngine('validate') == false) {
+	if($("form#jumpforms").validationEngine('validate') == false) {
 		return false;
 	}
 });
 
   $('.btnNext').on('click', function() {        
     if(isLastTab()) {
-		if($("form#formengine").validationEngine('validate') == true) {
-			$('form#formengine').submit();
+		if($("form#jumpforms").validationEngine('validate') == true) {
+			$('form#jumpforms').submit();
 		}
     } else {
       nextTab(); }
@@ -41,7 +41,7 @@ $('#myTab li a').on('click', function() {
 });
 
 function nextTab() {
-  if($("form#formengine").validationEngine('validate') == true) {
+  if($("form#jumpforms").validationEngine('validate') == true) {
 	var e = $('#myTab li.active').next().find('a[data-toggle="tab"]');  
 	if(e.length > 0) e.click();  
 	isFirstTab();
@@ -50,7 +50,7 @@ function nextTab() {
 }
 
 function prevTab() {
-  if($("form#formengine").validationEngine('validate') == true) {
+  if($("form#jumpforms").validationEngine('validate') == true) {
     var e = $('#myTab li.active').prev().find('a[data-toggle="tab"]');  
     if(e.length > 0) e.click(); 
     isFirstTab();

@@ -9,7 +9,7 @@ if (isset($_POST)) {
 	$table3 = $wpdb->prefix . "jumpforms_infusion";
     $fid = $_POST['fid'];
     $row = $wpdb->get_row("SELECT * FROM $table WHERE id = $fid");
-
+	
     if($row->webinar) {
     	require_once("../citrix.php");
 		$accesstoken = $row->accesstoken;
@@ -52,17 +52,21 @@ if (isset($_POST)) {
 	}
 		
 	// SugarCRM
-	if($row->sugarcrm) {
-		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_sugarcrm WHERE formid='$row->id'");
+	if($row->sugarfree) {
+		define(sugarEntry,true);
+		//die("inside");
+		$val = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms_sugarfree WHERE formid='$row->id'");
+		//$contents = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."jumpforms WHERE formid='$row->id'");
+		
+		//echo "<pre>";print_r($_POST);die();
 		require_once('nusoap/nusoap.php');  
 		$url = get_option("sugarfree_url");
 		$username = get_option("sugarfree_username");
 		$password = get_option("sugarfree_password");
-		$firstname = $val[0]->firstname; 
-		$lastname = $val[0]->lastname;
-		$email = $val[0]->email;
-		$addas = $val[0]->addas;
-		$module = ucfirst($addas);
+		//print_r($url);echo "<br />";
+		//print_r($username);echo "<br />";
+		//print_r($password);echo "<br />";
+		 
 		$client = new nusoapclient($url.'/soap.php?wsdl',true);
 		
 		$user_auth = array(
@@ -72,17 +76,56 @@ if (isset($_POST)) {
 		                'version' => '0.1'
 		        ), 'application_name' => 'wp-sugar-pro');
 		$login = $client->call('login',$user_auth);
+		//print_r($login);echo "<br />";
 		$session_id = $login['id'];
+		//print_r($login);echo "<br  />";
+		//echo "<pre>";
 		//$recordInfo = $client->call('get_module_fields', array('session' => $session_id, 'module_name' => 'Opportunities'));
-		$set_entry_params = array(  
+		//echo "recored info";print_r($recordInfo);
+		//die();
+		//$firstname = $val[0]->firstname; 
+		//$lastname = $val[0]->lastname;
+		//$email = $val[0]->email;
+		$addas = $val[0]->addas;
+		$module = ucfirst($addas);
+		//echo $module."kkk";die();
+		if($addas == "opportunity") {
+			$params = unserialize($val[0]->value);
+			$name = $_POST["f".$params['firstname']."_label"]." ".$_POST["f".$params['lastname']."_label"];
+			//echo "<pre>";print_r($params);echo "<br />";
+			$set_entry_params = array(  
+	    		'session' => $session_id,  
+			    'module_name' => "Opportunities",  
+			    'name_value_list'=>array(  
+			        array('name'=>'property_address_postalcode_c','value'=>$_POST["f".$params['zip']."_label"]),  
+			        array('name'=>'reason_c','value'=>$_POST["f".$params['reason']."_label"]),  
+			        array('name'=>'asking_price_c', 'value'=>$_POST["f".$params['aprice']."_label"]),
+			        array('name'=>'property_address_street_c', 'value'=>$_POST["f".$params['address']."_label"]),
+					array('name'=>'property_address_city_c', 'value'=>$_POST["f".$params['city']."_label"]),
+					array('name'=>'seller_mobile_phone_c', 'value'=>$_POST["f".$params['phone']."_label"]),
+					array('name'=>'seller_name_c', 'value'=>$name),
+					//array('name'=>'lastname', 'value'=>$_POST["f".$params['lastname']."_label"]),
+					//array('name'=>'entryid', 'value'=>$_POST["f".$params['entryid']."_label"]),
+					array('name'=>'date_entered', 'value'=>$_POST["f".$params['entrydate']."_label"]),
+					//array('name'=>'sourceurl', 'value'=>$_POST["f".$params['sourceurl']."_label"]),
+					array('name'=>'ip_c', 'value'=>$_SERVER['REMOTE_ADDR'])
+			        )
+				); 			
+			$result = $client->call('set_entry',$set_entry_params);  
+			//print_r($set_entry_params);die();
+			//print_r($result);die();	
+		}
+		
+		//$recordInfo = $client->call('get_module_fields', array('session' => $session_id, 'module_name' => 'Opportunities'));
+		/*$set_entry_params = array(  
 	    'session' => $session_id,  
 	    'module_name' => $module,  
 	    'name_value_list'=>array(  
 	        array('name'=>'first_name','value'=>$firstname),  
 	        array('name'=>'last_name','value'=>$lastname),  
 	        array('name'=>'email', 'value'=>$email)
-	        ));  
-	   $result = $client->call('set_entry',$set_entry_params);  
+	        )); */ 
+	   
 	}
 	// End of SugarCRM
 	

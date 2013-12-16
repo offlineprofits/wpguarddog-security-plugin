@@ -7,7 +7,7 @@ $host = DB_HOST;
 $user = DB_USER;
 $pass = DB_PASSWORD;
 $db = DB_NAME;
-$table = $wpdb->prefix . "formengine_data";
+$table = $wpdb->prefix . "jumpforms_data";
 $file = 'export_fid'.$fid;
 
 $link = mysql_connect($host, $user, $pass) or die("Can not connect." . mysql_error());

@@ -53,45 +53,33 @@ $table = $wpdb->prefix . "jumpforms";
 $table_sugarfree = $wpdb->prefix . "jumpforms_sugarfree";
 $forms = $wpdb->get_results("SELECT id,title FROM $table");
 $result = $wpdb->get_results("SELECT * FROM ".$table_sugarfree);	
- 
+
+
 if(isset($_POST['test_submit'])) {
 	$url = $_POST['url'];
-	//$url = "http://localhost/SugarCE";
-	//$client = new nusoapclient($url.'/soap.php?wsdl',true);
 	$username = $_POST['uname']; 
 	$password = $_POST['password'];
 	update_option("sugarfree_url", $url);
 	update_option("sugarfree_username", $username);
 	update_option("sugarfree_password", $password);
-	/*$set_entry_params = array(  
-    'session' => $session_id,  
-    'module_name' => 'Leads',  
-    'name_value_list'=>array(  
-        array('name'=>'first_name','value'=>'Jon'),  
-        array('name'=>'last_name','value'=>'Doe'),  
-        array('name'=>'status', 'value'=>'New'),  
-        array('name'=>'phone_work', 'value'=>'5555555555'),  
-        array('name'=>'account_name','value'=>''),  
-        array('name'=>'lead_source','value'=>'Web Site'),  
-        array('name'=>'primary_address_street ','value'=>'123 n nowhere'),  
-        array('name'=>'primary_address_city','value'=>'nine'),  
-        array('name'=>'primary_address_state','value'=>'WA'),  
-        array('name'=>'primary_address_postalcode','value'=>'99026'),  
-        array('name'=>'email','value'=>'nothere@email.com'),  
-        array('name'=>'description','value'=>''),  
-        array('name'=>'assigned_user_id', 'value'=>'')));  
-   
-    $result = $soapclient->call('set_entry',$set_entry_params);  */
-	//$user_auth = array(
-		//			'user_auth' => array(
-			//		'user_name' => $username,
-				//	'password' => $password,
-					//'version' => '0.1'
-					//),
-				//'application_name' => 'wp-sugar-free');
-	//$login = $client->call('login',$user_auth);
-	//$session_id = $login['id'];
-	 						
+		 
+	$client = new nusoapclient($url.'/soap.php?wsdl',true);
+	$user_auth = array(
+	                'user_auth' => array(
+	                'user_name' => $username,
+	                'password' => md5($password),
+	                'version' => '0.1'
+	        ), 'application_name' => 'jumpforms');
+	$login = $client->call('login',$user_auth);
+	$session_id = $login['id'];
+	
+	$opportunity_fields = $client->call('get_module_fields', array('session' => $session_id, 'module_name' => 'Opportunities'));
+	$lead_fields = $client->call('get_module_fields', array('session' => $session_id, 'module_name' => 'Leads'));
+	$contact_fields = $client->call('get_module_fields', array('session' => $session_id, 'module_name' => 'Contacts'));				
+	update_option("opportunity_fields", serialize($opportunity_fields));
+	update_option("lead_fields", serialize($lead_fields));
+	update_option("contact_fields", serialize($contact_fields));
+		
 }
 if(isset($_POST["save_opportunity"])) {
 	
@@ -105,6 +93,7 @@ if(isset($_POST["save_opportunity"])) {
 			$serialize_array["reason"] = $_POST["reason-".$id->id];
 			$serialize_array["aprice"] = $_POST["aprice-".$id->id];
 			$serialize_array["address"] = $_POST["address-".$id->id];
+			$serialize_array["city"] = $_POST["city-".$id->id];
 			$serialize_array["email"] = $_POST["email-".$id->id];
 			$serialize_array["phone"] = $_POST["phone-".$id->id];
 			$serialize_array["firstname"] = $_POST["firstname-".$id->id];
@@ -194,7 +183,7 @@ if(isset($_POST['save_feed'])) {
 			<div class="tdmfw_box_content">
 				<div id="settingsview" style="display: none;">
 					
-					<form method="post">
+					<form method="post" action="?page=jumpforms_sugarfree&plcsm=sts">
 					
 						<table>
 							<tr>
@@ -226,15 +215,35 @@ if(isset($_POST['save_feed'])) {
 				<div id="feedsview" style="display: none;">
 					
 					<?php 
+					
+					$opportunity_fields = unserialize(get_option("opportunity_fields"));
+					$lead_fields = unserialize(get_option("lead_fields"));
+					$contact_fields = unserialize(get_option("contact_fields"));
+					//echo "<pre>";print_r($lead_fields);die();
+					foreach($opportunity_fields['module_fields'] as $of) {
+						$opportunity_options[$of['name']] = $of['label'];  
+					}
+					//echo "<pre>";
+					//print_r($opportunity_options);
+					foreach($lead_fields['module_fields'] as $lf) {
+						$lead_options[$lf['name']] = $of['label'];
+					}
+					//echo "<br /><br /><br /><br />";
+					//print_r($lead_options);
+					foreach($contact_fields['module_fields'] as $cf) {
+						$contact_options[$cf['name']] = $of['label'];
+					}
+					//echo "<br /><br /><br /><br />";
+					//print_r($contact_options);die();
 					$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$table_sugarfree." ON ".$table.".id=".$table_sugarfree.".formid AND sugarfree=1");
-					echo "<form method='post'><table>";
+					echo "<form method='post' action='?page=jumpforms_sugarfree&plcsm=fds' ><table id='main_table'>";
+					
 					foreach($results as $r) {
 						$values = $wpdb->get_results("SELECT * FROM $table_sugarfree WHERE formid=$r->id");
 						$order  = $r->sortorder;
 						$sortrows = explode(",", $order);
-						
 						?>
-						<tr><td><a id="<?php echo $r->id ?>"><?php echo $r->title; ?></a></td>
+						<tr><td style="width: 147px;"><a id="<?php echo $r->id ?>"><?php echo $r->title; ?></a></td>
 							<td>
 								<select name="addas-<?php echo $r->id ?>" id="addas" class="addas">
 									<option <?php if($values[0]->addas == "") echo "selected='selected'" ?> value="">Add As</option>
@@ -242,11 +251,14 @@ if(isset($_POST['save_feed'])) {
 									<option <?php if($values[0]->addas == "contact") echo "selected='selected'" ?> value="contact">Contact</option>
 									<option <?php if($values[0]->addas == "opportunity") echo "selected='selected'" ?> value="opportunity">Opportunity</option>
 								</select>
-								<input type="hidden" value="<?php echo $r->id ?>" name="" id="" />
+								<input type="hidden" value="<?php echo $r->id ?>" name="" id="fid" />
+							</td>
+							<td>
+								<img src="<?php echo WP_PLUGIN_URL . '/jumpforms/assets/img/add.jpg' ?>" width="28px" height="28px" style="cursor: pointer" id="add_row" />
 							</td>
 						</tr>
 						</table>
-						<table id="lead_contact-<?php echo $r->id ?>">
+						<!--<table id="lead_contact-<?php echo $r->id ?>"  <?php if($values[0]->addas == 'opportunity') { ?>style="display: none;" <?php } ?> >
 							<tr>
 								<td>Email</td>
 								<td>
@@ -310,12 +322,40 @@ if(isset($_POST['save_feed'])) {
 							<tr><td><hr /></td><td><hr /></td></tr>
 						
 							<!--<tr><td></td><td><input type="submit" class="button-primary" value="Save Changes" name="save_feed" /></td></tr>-->
-						</table>
+						<!--</table>-->
 				
 					
-						<table id="opportunities-<?php echo $r->id ?>" style="display: none;">
-						<?php $upval = unserialize($values[0]->value); ?>
+						<table id="opportunities-<?php echo $r->id ?>" <?php if($values[0]->addas != 'opportunity') { ?>style="display: none;" <?php } ?> >
+						<?php $upval = unserialize($values[0]->value); 
+						$menu = unserialize($values[0]->menu);
+						$fff = 1;
+						foreach($upval as $u) {							
+						?>
 							<tr>
+							<td></td>
+							<td>
+									<select name="zip-<?php echo $r->id; ?>">
+									<option value=""></option>
+									<?php foreach ($sortrows as $counter) {
+										
+										$type = 'f'.$counter.'_type';
+										$label = 'f'.$counter.'_label';
+										if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
+										?>
+											<option value="<?php echo $counter; ?>" <?php if($upval["zip"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+										<?php 
+										} 
+										?>
+						
+									<?php } ?>
+									</select>
+							</td>
+							</tr>
+						<?php
+						$fff++;
+						}
+						?>
+							<!--<tr>
 								<td>Zip Code</td>
 								<td>
 								<select name="zip-<?php echo $r->id; ?>">
@@ -346,7 +386,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["reason"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -366,7 +406,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["aprice"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -386,7 +426,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["address"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -406,7 +446,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["city"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -426,7 +466,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type =="email") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["email"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -446,7 +486,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["phone"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -466,7 +506,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["firstname"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -486,7 +526,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["lastname"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -506,7 +546,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["entryid"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -526,7 +566,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["entrydate"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -546,7 +586,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["sourceurl"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -566,7 +606,7 @@ if(isset($_POST['save_feed'])) {
 								$label = 'f'.$counter.'_label';
 								if($r->$type != "email" && $r->$type !="sectionstart" && $r->$type !="sectionend") {
 								?>
-									<option value="<?php echo $counter; ?>" <?php if($values[0]->last_name == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
+									<option value="<?php echo $counter; ?>" <?php if($upval["ip"] == $counter) echo "selected='selected'" ?> ><?php echo $r->$label; ?></option>
 								<?php 
 								} 
 								?>
@@ -574,7 +614,7 @@ if(isset($_POST['save_feed'])) {
 								<?php } ?>
 								</select>
 								</td>
-							</tr>
+							</tr>-->
 							<tr><td><hr /></td><td><hr /></td></tr>
 							
 						</table>
@@ -590,7 +630,7 @@ if(isset($_POST['save_feed'])) {
 				</div>	
 				
 				<div id="addinfview" style="display: none;">
-					<form method="post"> 
+					<form method="post" action="?page=jumpforms_sugarfree&plcsm=ads"> 
 					
 						<table>
 							<b>Add Forms to Sugarfree CRM</b>
@@ -617,7 +657,6 @@ if(isset($_POST['save_feed'])) {
 	jQuery(function() {
 		jQuery(".addas").change(function() {
 			id = jQuery(this).next().val();
-			alert(id)
 			val = jQuery(this).val();
 			if(val == "lead" || val == "contact") {
 				jQuery("#opportunities-"+id).hide();
@@ -628,5 +667,105 @@ if(isset($_POST['save_feed'])) {
 				jQuery("#opportunities-"+id).show();
 			}
 		})
+	})
+</script>
+<?php
+
+if(isset($_GET['plcsm']) && $_GET['plcsm'] == 'sts') {
+?>
+<script>
+	jQuery(function() {
+		jQuery("#settings").css("color","black");
+		jQuery("#feeds").css("color","#21759B");
+		jQuery("#addinf").css("color","#21759B");
+		jQuery("#settingsview").css("display","block");
+		jQuery("#feedsview").css("display","none");
+		jQuery("#addinfview").css("display","none");
+	})
+</script>
+<?php	
+}
+if(isset($_GET['plcsm']) && $_GET['plcsm'] == 'fds') {
+?>
+<script>
+	jQuery(function() {
+		jQuery("#settings").css("color","#21759B");
+		jQuery("#feeds").css("color","black");
+		jQuery("#addinf").css("color","#21759B");
+		jQuery("#settingsview").css("display","none");
+		jQuery("#feedsview").css("display","block");
+		jQuery("#addinfview").css("display","none");
+	})
+</script>
+<?php	
+}
+if(isset($_GET['plcsm']) && $_GET['plcsm'] == 'ads') {
+?>
+<script>
+	jQuery(function() {
+		jQuery("#settings").css("color","#21759B");
+		jQuery("#feeds").css("color","#21759B");
+		jQuery("#addinf").css("color","black");
+		jQuery("#settingsview").css("display","none");
+		jQuery("#feedsview").css("display","none");
+		jQuery("#addinfview").css("display","block");
+	})
+</script>
+<?php	
+}
+?>
+
+<script>
+	<?php
+	$results = $wpdb->get_results("SELECT * FROM $table INNER JOIN ".$table_sugarfree." ON ".$table.".id=".$table_sugarfree.".formid AND sugarfree=1");
+	//print_r($results);
+	foreach($results as $r) {
+		$values = $wpdb->get_results("SELECT * FROM $table_sugarfree WHERE formid=$r->id");
+		$order  = $r->sortorder;
+		$sortrows = explode(",", $order);
+		foreach ($sortrows as $counter) {
+			$type = 'f'.$counter.'_type';
+			$label = 'f'.$counter.'_label';
+			//echo "<script>alert('".$type."')</script>";
+			if($r->$type != "sectionstart" && $r->$type != "sectionend") {
+				$drop_val[$r->id][$counter] = $r->$label;	
+			}
+		}	
+	}		
+	//echo "<pre>"; print_r($drop_val);die();		
+	echo "var opportunity_array = ". json_encode($opportunity_options).";";
+	echo "var lead_array = ". json_encode($lead_options).";";
+	echo "var contact_array = ". json_encode($contact_options).";";
+	echo "var drop_val = ". json_encode($drop_val).";";
+	?>
+	
+	op_select = "<select>";
+	for(k in opportunity_array) {
+		op_select = op_select + "<option value='"+k+"' >"+opportunity_array[k]+"</option>";
+	}
+	op_select = op_select + "</select>";
+	
+	ld_select = "<select>";
+	for(l in lead_array) {
+		ld_select = ld_select + "<option value='"+l+"' >"+lead_array[l]+"</option>";
+	}
+	ld_select = ld_select + "</select>";
+	
+	cn_select = "<select>";
+	for(c in contact_array) {
+		cn_select = cn_select + "<option value='"+c+"' >"+contact_array[c]+"</option>";
+	}
+	cn_select = cn_select + "</select>";
+	
+	
+	 
+	jQuery("#add_row").click(function() {
+		id = jQuery("#addas").next().val();
+		drop_select = "<select>";
+		for(d in drop_val[id]) {
+			drop_select = drop_select + "<option value='"+d+"' >"+drop_val[id][d]+"</option>";
+		}
+		drop_select = drop_select + "</select>";
+		jQuery("#main_table").append("<tr><td>"+op_select+"</td><td>"+drop_select+"</td></tr>");
 	})
 </script>
